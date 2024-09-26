@@ -231,7 +231,7 @@ llike_var_corrected_q <- function(FZ, ar, f_param_half, f_param_half_trans, sigm
 #' Is the matrix a Hpd matrix? This is in beyondWhittle(misc.R)
 #' @keywords internal
 is_hpd <- function(A, tol=1e-15) {
-  (A==Adj(A)) && (!hasEigenValueSmallerZero(A, tol))
+  (A==Adj(A))[1] && (!hasEigenValueSmallerZero(A, tol))
 }
 
 
