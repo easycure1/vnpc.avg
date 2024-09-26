@@ -50,9 +50,9 @@ gibbs_vnpc_avg <- function(data,
                            trunc_l=0.1,
                            trunc_r=0.9,
                            coars=F,
-                           L = 20,
-                           mu_beta=rep(1e-4, ncol(data)*ncol(data)*var.order),
-                           V_beta=diag(ncol(data)*ncol(data)*var.order)*1e4,
+                           L=20,
+                           mu_beta=NULL,
+                           V_beta=NULL,
                            sqrt_d=F) {
   if (!is.matrix(data) || !is.numeric(data)) {
     stop("'data' must be numeric matrix with d columns and n rows")
@@ -87,6 +87,12 @@ gibbs_vnpc_avg <- function(data,
     L <- max(L, length(trunc_N) ^ (1 / 3))
   } else {
     L <- max(L, (length(data) / seg_n) ^ (1 / 3))
+  }
+  L <- ceiling(L)
+  
+  if (corrected) {
+    mu_beta <- rep(1e-4, ncol(data)*ncol(data)*var.order)
+    V_beta <- diag(ncol(data)*ncol(data)*var.order)*1e4
   }
   prior_params <- list(prior.cholesky=F,
                        var.order=var.order,
