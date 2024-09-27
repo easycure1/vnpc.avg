@@ -59,3 +59,5 @@ vignettes/*.pdf
 tests/testthat/testthat.Rout
 tests/testthat/testthat.Rout.fail
 tests/testthat/testthat.Rout.log
+
+.idea
