@@ -28,8 +28,8 @@ gibbs_vnpc_avg(
   trunc_r = 0.9,
   coars = F,
   L = 20,
-  mu_beta = rep(1e-04, ncol(data) * ncol(data) * var.order),
-  V_beta = diag(ncol(data) * ncol(data) * var.order) * 10000,
+  mu_beta = NULL,
+  V_beta = NULL,
   sqrt_d = F
 )
 }
