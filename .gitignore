@@ -1,0 +1,63 @@
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+*.RData
+*.png
+# User-specific files
+.Ruserdata
+.Rproj.user/
+
+# Installed library files
+.Renviron
+
+# macOS-specific files
+.DS_Store
+
+# RStudio project files
+*.Rproj
+
+# Compiled object files
+*.o
+*.so
+*.dll
+
+# Compiled C++ files (in your src folder)
+src/*.o
+src/*.so
+src/*.dll
+
+# Generated documentation
+man/*.Rd
+
+# Temporary files created during build and tests
+inst/doc
+inst/libs
+inst/Meta
+inst/build
+.Rcheck/
+__MACOSX/
+
+# Temporary files from package building
+*.tar.gz
+*.zip
+
+# C++ cache files
+*.gcno
+*.gcda
+
+# Ignore coverage reports
+coverage/
+*.gcov
+
+# Ignore vignettes and docs during intermediate steps
+vignettes/*.html
+vignettes/*.pdf
+
+# Ignore devtools test logs
+tests/testthat/testthat.Rout
+tests/testthat/testthat.Rout.fail
+tests/testthat/testthat.Rout.log
+
+.idea
