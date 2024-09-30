@@ -3,8 +3,4 @@
 export(gibbs_vnpc_avg)
 export(psd_varma)
 importFrom(Rcpp,evalCpp)
-importFrom("stats", "ar", "dbeta", "dexp", "dlnorm", "dnorm", "fft",
-             "integrate", "mad", "median", "pchisq", "quantile", "rbeta",
-             "rexp", "rlnorm", "rnorm", "rt", "runif")
-importFrom("utils", "combn")
 useDynLib(vnpc.avg, .registration = TRUE)

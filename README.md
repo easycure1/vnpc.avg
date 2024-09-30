@@ -44,6 +44,7 @@ First install the dependencies
 install.packages("devtools")
 library(devtools)
 devtools::install_deps()
+devtools::document()
 ```
 
 
