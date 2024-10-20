@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # vnpc.avg
 
 Obtain samples of the posterior of the averge multivariate likelihood in conjunction with an Hpd AGamma process prior on the spectral density matrix.
@@ -53,6 +52,8 @@ Install the package
 ```
 devtools::install(quick = TRUE)
 ```
-=======
-ET data (4096000 by 3) here https://drive.google.com/file/d/1Tfm-4PI-LdUzzjj7iz5bK_JmYXStJnKq/view?usp=sharing
->>>>>>> upstream/main
+
+# ET Data
+Shape: (4096000 by 3) 
+[Link](https://drive.google.com/file/d/1Tfm-4PI-LdUzzjj7iz5bK_JmYXStJnKq/view?usp=sharing)
+
