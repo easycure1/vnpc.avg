@@ -124,7 +124,7 @@ gibbs_m_avg_nuisance <- function(data,
   omega_test_val <- prior_params$omega_fun(0.5); stopifnot(omega_test_val > 0); rm(omega_test_val)
   omega_fun <- prior_params$omega_fun
   stopifnot(!is.null(prior_params$Sigma_fun)); stopifnot(class(prior_params$Sigma_fun)=="function")
-  Sigma_test_val <- prior_params$Sigma_fun(0.5); stopifnot(ncol(Sigma_test_val)==d && nrow(Sigma_test_val)==d); stopifnot(is_hpd(Sigma_test_val)); rm(Sigma_test_val)
+  Sigma_test_val <- prior_params$Sigma_fun(0.5, d=d); stopifnot(ncol(Sigma_test_val)==d && nrow(Sigma_test_val)==d); stopifnot(is_hpd(Sigma_test_val)); rm(Sigma_test_val)
   Sigma_fun <- prior_params$Sigma_fun
   stopifnot(!is.null(prior_params$k.theta)); stopifnot(all(prior_params$k.theta > 0)); stopifnot((prior.cholesky && length(prior_params$k.theta)==d*d) || ((!prior.cholesky) && length(prior_params$k.theta)==1)) # may be a vector (iff prior.cholesky)
   k.theta <- prior_params$k.theta

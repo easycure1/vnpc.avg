@@ -123,7 +123,7 @@ lprior_matrixGamma <- function(r,
     stop()
   }
   omega_vals <- do.call(omega_fun, list(Z)) #eval(omega_fun(Z))
-  Sigma_vals <- do.call(Sigma_fun, list(Z)) #eval(Sigma_fun(Z))
+  Sigma_vals <- do.call(Sigma_fun, list(Z, d=dim(U)[1])) #eval(Sigma_fun(Z))
   #tryCatch({
   beta_vals <- beta_fun_AGamma_process_cube(U, Sigma_vals)
   # }, error=function(e) {

@@ -23,6 +23,6 @@ Sigma_fun_eye <- function(x, d=2) { # x in [0,1]
 #' Obtain the initial value of Sigma for AGamma process,
 #' This is simplified in beyondWhittle
 #' @keywords internal
-my_Sigma_fun <- function(x) {
-  Sigma_fun_eye(x) * 1e4
+my_Sigma_fun <- function(x, d=2) {
+  Sigma_fun_eye(x, d) * 1e4
 }

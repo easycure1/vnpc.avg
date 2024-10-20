@@ -5,7 +5,7 @@
 \title{Obtain the initial value of Sigma for AGamma process,
 This is simplified in beyondWhittle}
 \usage{
-my_Sigma_fun(x)
+my_Sigma_fun(x, d = 2)
 }
 \description{
 Obtain the initial value of Sigma for AGamma process,
