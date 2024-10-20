@@ -8,6 +8,7 @@ py_fft_fuction <- import("sgvb_psd.backend.analysis_data")$compute_chunked_fft
 set.seed(0) 
 
 
+
 n <- 2048
 d <- 2
 n_segments <- as.integer(4)
@@ -23,6 +24,10 @@ simulate_data <- function(n, d){
   return(data)
 }
   
+
+
+
+
 
 omegaFreq <- function(n) {
   return(2 / n * (1:(n / 2 + 1) - 1))
