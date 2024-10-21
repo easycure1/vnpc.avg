@@ -50,7 +50,7 @@ devtools::document()
 
 Install the package
 ```
-devtools::install(quick = TRUE)
+devtools::install()
 ```
 
 # ET Data

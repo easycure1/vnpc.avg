@@ -36,20 +36,6 @@ save(mcmc_vnp_avg, file = "mcmc_results_test.RData")
 
 
 
-py_psd_estimator <- import("sgvb_psd.psd_estimator")$PSDEstimator
-plot_psd <- import("sgvb_psd.postproc.plot_psd")$plot_psdq
-
-py_psd_optim <- py_psd_estimator(
-  x = r_to_py(data),
-  N_theta = 50,
-  nchunks = as.integer(n_segments),
-  ntrain_map = 1000,
-  max_hyperparm_eval = 1,
-  fs = 2 * pi,
-)
-py_psd_optim$run(lr = 0.003)
-
-
 ## PLOT
 
 # format R data for python
@@ -58,19 +44,35 @@ psdq[1, , , ] <-  mcmc_vnp_avg$psd.u05[ , , 1:n_freq_per_seg]  # Lower quantile
 psdq[2, , , ] <- mcmc_vnp_avg$psd.median[ , , 1: n_freq_per_seg]       # PSD median
 psdq[3, , , ] <- mcmc_vnp_avg$psd.u95[ , , 1:n_freq_per_seg]    # Upper quantile
 psdq <- aperm(psdq, c(1, 4, 2, 3)) # from (3, d,d, nfreq) -> (3, nfreq, d,d)
-py$psdq <- psdq
+vnpc_psdq <- r_to_py(psdq)
+py_data <- r_to_py(data)
+nchunks <- r_to_py(n_segments)
+
+
 
 py_run_string("
-axs = sgvb.plot(
+from sgvb_psd.psd_estimator import PSDEstimator
+from sgvb_psd.postproc import plot_psdq
+import numpy as np
+
+sgvb_runner = PSDEstimator(
+  x=r.py_data,
+  N_theta=40,
+  nchunks=int(r.nchunks),
+  ntrain_map=1000,
+  fs=2 * np.pi,
+)
+sgvb_runner.run(lr=0.003)
+
+
+axs = sgvb_runner.plot(
   off_symlog=False,
   xlims=(0, 3.14),
   off_ylims=(-0.2, 0.2),
 )
-axs[0,0].get_figure().savefig('sgvb.png')
-
 axs = plot_psdq(
-  psdq,
-  sgvb.freq,
+  r.vnpc_psdq,
+  sgvb_runner.freq,
   color='tab:red',
   axs=axs,
   off_symlog=False,

@@ -307,6 +307,7 @@ gibbs_m_avg_nuisance <- function(data,
     lsd_param <- log(eps_param) / 2
   }
 
+  cat("Starting MH sampler")
   ##
   ## MH-within Gibbs sampler
   ##
@@ -336,6 +337,7 @@ gibbs_m_avg_nuisance <- function(data,
       ## f.store: previous lpost value to save some computation time in MH steps
       ## Needs to be updated for every proposal acceptance
       ##
+      t0 <- Sys.time()
       f.store <- lpost_matrixGamma(omega=omega,
                                    FZ=FZ,
                                    r=r[,i],
@@ -370,6 +372,14 @@ gibbs_m_avg_nuisance <- function(data,
                                            verbose=verbose) +
         lprior_theta(theta[,1])
       llikeTrace[1] <- lpostTrace[1] - lpriorTrace[1]
+
+      t1 <- Sys.time()
+      # Calculate the runtime in seconds
+      runtime <- as.numeric(difftime(t1, t0, units = "secs"))
+
+      # Print the runtime in scientific notation
+      cat("Time for 1 LnL eval:", format(runtime, scientific = TRUE), "s\n")
+
     }
 
     ##
