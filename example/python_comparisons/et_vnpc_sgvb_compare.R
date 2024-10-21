@@ -49,6 +49,7 @@ sgvb_runner.run(lr=0.003)
 
 
 py_run_string("
+from sgvb_psd.postproc import plot_psdq, plot_peridogram, format_axes
 
 # rescale freq from [0, pi] to [0, 512]
 freq = sgvb_runner.freq * 1024.0 / np.pi
@@ -56,18 +57,16 @@ freq = sgvb_runner.freq * 1024.0 / np.pi
 # rescale PSDs (1e+22 is approx std for data)
 py_psd = sgvb_runner.pointwise_ci / 1e+22**2 / (1024.0/ np.pi)
 r_psd = r.py_vnpc_psdq / 1e+22**2 / (1024.0/ np.pi)
-
+r_psd = r_psd.astype(np.complex128)
+# make lower triangle elements imaginary by multiplying by 1j
+for i in range(3):
+  for j in range(3):
+    if i > j:
+      r_psd[:, :, i, j] *= 1j
 
 # rescale pdgrm
 pdgrm = sgvb_runner.pdgrm / 1e+22**2 / (1024.0/ np.pi)
 pdgrm_freq = sgvb_runner.pdgrm_freq * 1024.0 / np.pi
-
-
-
-
-
-# python
-
 
 kwgs = dict(
   off_symlog=True,
