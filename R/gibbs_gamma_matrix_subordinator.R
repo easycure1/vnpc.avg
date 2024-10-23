@@ -316,7 +316,7 @@ gibbs_m_avg_nuisance <- function(data,
   
   for (i in 1:(Ntotal-1)) {
 
-    if (!(i%%print_interval)) {
+    if (i%%print_interval ==0) {
       setTxtProgressBar(progress_bar, i)
     }
 
@@ -804,6 +804,9 @@ gibbs_m_avg_nuisance <- function(data,
 
   } # END MCMC LOOP
 
+  
+  close(progress_bar)
+  
   ##
   ## Post processing
   ##
