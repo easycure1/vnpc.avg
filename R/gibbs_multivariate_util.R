@@ -93,17 +93,17 @@ mpdgrm <- function(FZ) {
 #' \emph{Time Series: Theory and Methods (Second Edition)}
 #' @return an array containing the values of the varma psd matrix at freq
 #' @export
-psd_varma <- function(lambda,
-                      ar=matrix(nrow=nrow(sigma),ncol=0),
-                      ma=matrix(nrow=nrow(sigma),ncol=0),
-                      sigma) { # TODO: CPP
-  d <- nrow(sigma)
-  N <- length(lambda)
+psd_varma <- function(freq,
+                      ar=matrix(nrow=nrow(Sigma),ncol=0),
+                      ma=matrix(nrow=nrow(Sigma),ncol=0),
+                      Sigma) { # TODO: CPP
+  d <- nrow(Sigma)
+  N <- length(freq)
   stopifnot(nrow(ar)==d && !(ncol(ar)%%d))
   stopifnot(nrow(ma)==d && !(ncol(ma)%%d))
-  transfer_ar <- transfer_polynomial(lambda, -ar) # note the minus
-  transfer_ma <- transfer_polynomial(lambda, ma)
-  psd <- varma_transfer2psd(transfer_ar, transfer_ma, sigma)
+  transfer_ar <- transfer_polynomial(freq, -ar) # note the minus
+  transfer_ma <- transfer_polynomial(freq, ma)
+  psd <- varma_transfer2psd(transfer_ar, transfer_ma, Sigma)
   return(list(psd=psd,
               transfer_ar=transfer_ar,
               transfer_ma=transfer_ma))

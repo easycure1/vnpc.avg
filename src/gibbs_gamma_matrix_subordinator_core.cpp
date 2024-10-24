@@ -78,7 +78,7 @@ arma::cx_cube get_w_rcpp(ComplexVector p_,
 
 //' Log alpha star density function for the prior of AGamma process. See (3.26) in Meier (2018).
 //' This is AGammaProcessPrior::lalpha() in beyondWhittle(a_gamma_process_prior.cpp).
-//' @keywords
+//' @keywords internal
 // [[Rcpp::export]]
 NumericVector lalphaStar_AGamma(ComplexVector U_, double eta, ComplexVector Sigma_) {
   const arma::cx_cube U = cx_cube_from_ComplexVector(U_);
