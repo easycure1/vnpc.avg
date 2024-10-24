@@ -11,3 +11,4 @@ lalphaStar_AGamma(U_, eta, Sigma_)
 Log alpha star density function for the prior of AGamma process. See (3.26) in Meier (2018).
 This is AGammaProcessPrior::lalpha() in beyondWhittle(a_gamma_process_prior.cpp).
 }
+\keyword{internal}

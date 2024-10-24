@@ -9,3 +9,4 @@ const_cube(sigma, N)
 \description{
 Transform all matrices of the array into the same desirable matrix
 }
+\keyword{internal}

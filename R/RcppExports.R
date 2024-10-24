@@ -34,7 +34,7 @@ get_w_rcpp <- function(p_, Z, k) {
 
 #' Log alpha star density function for the prior of AGamma process. See (3.26) in Meier (2018).
 #' This is AGammaProcessPrior::lalpha() in beyondWhittle(a_gamma_process_prior.cpp).
-#' @keywords
+#' @keywords internal
 lalphaStar_AGamma <- function(U_, eta, Sigma_) {
     .Call(`_vnpc_avg_lalphaStar_AGamma`, U_, eta, Sigma_)
 }
@@ -165,7 +165,7 @@ logdet_cube <- function(f_, excludeBoundary) {
 }
 
 #' Transform all matrices of the array into the same desirable matrix
-#' @keywords
+#' @keywords internal
 const_cube <- function(sigma, N) {
     .Call(`_vnpc_avg_const_cube`, sigma, N)
 }

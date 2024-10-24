@@ -352,7 +352,7 @@ NumericVector logdet_cube(ComplexVector f_, bool excludeBoundary) { // ok
 }
 
 //' Transform all matrices of the array into the same desirable matrix
-//' @keywords
+//' @keywords internal
 // [[Rcpp::export]]
 arma::cx_cube const_cube(arma::cx_mat sigma, unsigned N) { // ok
   arma::cx_cube res(sigma.n_rows, sigma.n_cols, N);

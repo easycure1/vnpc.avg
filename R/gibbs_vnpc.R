@@ -2,6 +2,10 @@
 #'
 #' Obtain samples of the posterior of the multivariate corrected likelihood in conjuction with an Hpd AGamma process prior on the spectral density matrix
 #' @param data numerical matrix
+#' @param seg_n number of segments (integer >= 1)
+#' @param truncation flag indicating whether the data needs to be truncated (default = FALSE)
+#' @param trunc_N length of the truncation of data if truncation = TRUE
+#' @param corrected flag indicating whether the corrected likelihood is used (default = FALSE)
 #' @param var.order VAR order for the parametric working model
 #' @param Ntotal total number of iterations to run the Markov chain
 #' @param burnin number of initial iterations to be discarded
@@ -21,8 +25,15 @@
 #' @param L truncation parameter of Gamma process
 #' @param mu_beta prior parameter for VAR coefficients, stacked numerical vector
 #' @param V_beta prior parameter for VAR coefficients, Hpd matrix
+#' @param sqrt_d flag indicating whether the regular square root of a Hermitian matrix is used, otherwise the Cholesky decomposition is used to approximate the square root (see Remark 5.2 in Liu (2023)) 
 #'
-#' @return
+#' @return list containing the following fields:
+#'  \item{data}{(centerd) data}
+#'  \item{psd.median, psd.mean}{(pointwise) posterior median and mean}
+#'  \item{psd.p05, psd.p95}{90\% pointwise credible interval}
+#'  \item{psd.u05, psd.u95}{90\% uniform credible interval}
+#'  \item{coherence.median}{(pointwise) posterior median coherence}
+#'  \item{coherence.p05, coherence.p95}{(pointwise) 90\% pointwise credible interval for the coherence}
 #' @importFrom Rcpp evalCpp
 #' @useDynLib vnpc.avg, .registration = TRUE
 #' @export

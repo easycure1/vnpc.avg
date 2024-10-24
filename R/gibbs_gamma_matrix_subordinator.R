@@ -267,8 +267,8 @@ gibbs_m_avg_nuisance <- function(data,
       param__phi[,,1] <- phiFromBeta_normalInverseWishart(param__beta[,1], d, var.order)
       sigma.fit <- a1$var.pred
       V_beta_inv <- solve(V_beta)
-      suppressWarnings(if (sqrt_d) f_param_half <- sqrt_cube(psd_varma(lambda, param__phi[,,1], sigma=sigma.fit)$psd, excludeBoundary=F)
-      else f_param_half <- chol_cube(psd_varma(lambda, param__phi[,,1], sigma=sigma.fit)$psd, excludeBoundary=F), classes='warning')
+      suppressWarnings(if (sqrt_d) f_param_half <- sqrt_cube(psd_varma(lambda, param__phi[,,1], Sigma=sigma.fit)$psd, excludeBoundary=F)
+      else f_param_half <- chol_cube(psd_varma(lambda, param__phi[,,1], Sigma=sigma.fit)$psd, excludeBoundary=F), classes='warning')
       ##
       ## NOTE: a bit abuse of notation for phi:
       ## - Parse f_param_half to likelihood to save redundant computations
@@ -286,8 +286,8 @@ gibbs_m_avg_nuisance <- function(data,
       ## NOTE: a bit abuse of notation for phi:
       ## Parse f_param_half to likelihood to save redundant computations
       ##
-      suppressWarnings(if (sqrt_d) f_param_half <- sqrt_cube(psd_varma(lambda, phi.fit, sigma=sigma.fit)$psd, excludeBoundary=F)
-      else f_param_half <- chol_cube(psd_varma(lambda, phi.fit, sigma=sigma.fit)$psd, excludeBoundary=F), classes='warning')
+      suppressWarnings(if (sqrt_d) f_param_half <- sqrt_cube(psd_varma(lambda, phi.fit, Sigma=sigma.fit)$psd, excludeBoundary=F)
+      else f_param_half <- chol_cube(psd_varma(lambda, phi.fit, Sigma=sigma.fit)$psd, excludeBoundary=F), classes='warning')
       phi.fit <- list(ar=phi.fit,
                       f_param_half=f_param_half,
                       f_param_half_trans=trans_cube(f_param_half))
@@ -628,7 +628,7 @@ gibbs_m_avg_nuisance <- function(data,
         param__beta.star[indices_jj] <- param__beta.star[indices_jj] +
           MASS::mvrnorm(1, mu=rep(0, d*d), Sigma=diag(eps_param[jj], d*d, d*d))
         param__phi.star <- phiFromBeta_normalInverseWishart(param__beta.star, d, var.order)
-        f_param.star <- psd_varma(lambda, param__phi.star, sigma=sigma.fit)$psd
+        f_param.star <- psd_varma(lambda, param__phi.star, Sigma=sigma.fit)$psd
 
         # plotMPsd(f_param.star, main="proposed")
         rejectedPhi <- F
@@ -842,15 +842,15 @@ gibbs_m_avg_nuisance <- function(data,
 
   # Corrected (not toggled yet)
   if (corrected && prior.q && (!toggle)) {
-    suppressWarnings(if (sqrt_d) f_param_half <- sqrt_cube(psd_varma(lambda, phi.fit$ar, sigma=sigma.fit)$psd, excludeBoundary=F)
-    else f_param_half <- chol_cube(psd_varma(lambda, phi.fit$ar, sigma=sigma.fit)$psd, excludeBoundary=F), classes='warning')
+    suppressWarnings(if (sqrt_d) f_param_half <- sqrt_cube(psd_varma(lambda, phi.fit$ar, Sigma=sigma.fit)$psd, excludeBoundary=F)
+    else f_param_half <- chol_cube(psd_varma(lambda, phi.fit$ar, Sigma=sigma.fit)$psd, excludeBoundary=F), classes='warning')
     f_param_half_trans <- trans_cube(f_param_half)
   }
   for (isample in 1:length(keep)) {
     if (corrected && prior.q) {
       if (toggle) {
-        suppressWarnings(if (sqrt_d) f_param_half <- sqrt_cube(psd_varma(lambda, param__phi[,,isample], sigma=sigma.fit)$psd, excludeBoundary=F)
-        else f_param_half <- chol_cube(psd_varma(lambda, param__phi[,,isample], sigma=sigma.fit)$psd, excludeBoundary=F), classes='warning')
+        suppressWarnings(if (sqrt_d) f_param_half <- sqrt_cube(psd_varma(lambda, param__phi[,,isample], Sigma=sigma.fit)$psd, excludeBoundary=F)
+        else f_param_half <- chol_cube(psd_varma(lambda, param__phi[,,isample], Sigma=sigma.fit)$psd, excludeBoundary=F), classes='warning')
         f_param_half_trans <- trans_cube(f_param_half)
       }
       q_sample <- get_f_matrix(U[,,,isample], r[,isample], Z[,isample], k[,isample], db.list, prior.cholesky)

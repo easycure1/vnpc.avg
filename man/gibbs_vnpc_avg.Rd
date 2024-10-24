@@ -36,6 +36,14 @@ gibbs_vnpc_avg(
 \arguments{
 \item{data}{numerical matrix}
 
+\item{seg_n}{number of segments (integer >= 1)}
+
+\item{truncation}{flag indicating whether the data needs to be truncated (default = FALSE)}
+
+\item{trunc_N}{length of the truncation of data if truncation = TRUE}
+
+\item{corrected}{flag indicating whether the corrected likelihood is used (default = FALSE)}
+
 \item{var.order}{VAR order for the parametric working model}
 
 \item{Ntotal}{total number of iterations to run the Markov chain}
@@ -73,6 +81,17 @@ gibbs_vnpc_avg(
 \item{mu_beta}{prior parameter for VAR coefficients, stacked numerical vector}
 
 \item{V_beta}{prior parameter for VAR coefficients, Hpd matrix}
+
+\item{sqrt_d}{flag indicating whether the regular square root of a Hermitian matrix is used, otherwise the Cholesky decomposition is used to approximate the square root (see Remark 5.2 in Liu (2023))}
+}
+\value{
+list containing the following fields:
+ \item{data}{(centerd) data}
+ \item{psd.median, psd.mean}{(pointwise) posterior median and mean}
+ \item{psd.p05, psd.p95}{90\% pointwise credible interval}
+ \item{psd.u05, psd.u95}{90\% uniform credible interval}
+ \item{coherence.median}{(pointwise) posterior median coherence}
+ \item{coherence.p05, coherence.p95}{(pointwise) 90\% pointwise credible interval for the coherence}
 }
 \description{
 Obtain samples of the posterior of the multivariate corrected likelihood in conjuction with an Hpd AGamma process prior on the spectral density matrix

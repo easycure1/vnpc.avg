@@ -5,18 +5,18 @@
 \title{VARMA(p,q) spectral density function}
 \usage{
 psd_varma(
-  lambda,
-  ar = matrix(nrow = nrow(sigma), ncol = 0),
-  ma = matrix(nrow = nrow(sigma), ncol = 0),
-  sigma
+  freq,
+  ar = matrix(nrow = nrow(Sigma), ncol = 0),
+  ma = matrix(nrow = nrow(Sigma), ncol = 0),
+  Sigma
 )
 }
 \arguments{
+\item{freq}{numeric vector of frequencies to evaluate the psd, 0 <= freq < pi}
+
 \item{ar}{autoregressive coeffient matrix (d times p*d) of VARMA model, defaults to empty VAR component}
 
 \item{ma}{moving average coeffient matrix (d times p*d) of VARMA model, defaults to empty VAR component}
-
-\item{freq}{numeric vector of frequencies to evaluate the psd, 0 <= freq < pi}
 
 \item{Sigma}{positive definite innovation covariance matrix (d times d)}
 }
