@@ -311,10 +311,13 @@ gibbs_m_avg_nuisance <- function(data,
   ##
   ## MH-within Gibbs sampler
   ##
+  
+  progress_bar <- txtProgressBar(min=1, max=(Ntotal-1), style=3)
+  
   for (i in 1:(Ntotal-1)) {
 
-    if (!(i%%print_interval)) {
-      cat("iteration ", i, "/", Ntotal, "\n", sep="")
+    if (i%%print_interval ==0) {
+      setTxtProgressBar(progress_bar, i)
     }
 
     ## Storage segmented data
@@ -801,6 +804,9 @@ gibbs_m_avg_nuisance <- function(data,
 
   } # END MCMC LOOP
 
+  
+  close(progress_bar)
+  
   ##
   ## Post processing
   ##
