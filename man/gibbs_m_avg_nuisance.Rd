@@ -9,7 +9,8 @@ gibbs_m_avg_nuisance(
   mcmc_params,
   seg_n = 1,
   truncation = FALSE,
-  trunc_N = NULL,
+  trunc_freq = NULL,
+  trunc_freq_lim = NULL,
   corrected,
   prior_params,
   model_params

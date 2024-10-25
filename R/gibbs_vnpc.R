@@ -3,9 +3,10 @@
 #' Obtain samples of the posterior of the multivariate corrected likelihood in conjuction with an Hpd AGamma process prior on the spectral density matrix
 #' @param data numerical matrix
 #' @param seg_n number of segments (integer >= 1)
-#' @param truncation flag indicating whether the data needs to be truncated (default = FALSE)
-#' @param trunc_N length of the truncation of data if truncation = TRUE
-#' @param corrected flag indicating whether the corrected likelihood is used (default = FALSE)
+#' @param truncation flag indicating whether the data needs to be truncated (default = FALSE).
+#' @param trunc_freq sampling frequency, used when truncation = TRUE only.
+#' @param trunc_freq_lim frequency bounds of the truncated data, an positive integer or a 2-dimensional vector with lower and upper bounds being integers, used for truncation = TRUE only.
+#' @param corrected flag indicating whether the corrected likelihood is used (default = FALSE).
 #' @param var.order VAR order for the parametric working model
 #' @param Ntotal total number of iterations to run the Markov chain
 #' @param burnin number of initial iterations to be discarded
@@ -34,6 +35,10 @@
 #'  \item{psd.u05, psd.u95}{90\% uniform credible interval}
 #'  \item{coherence.median}{(pointwise) posterior median coherence}
 #'  \item{coherence.p05, coherence.p95}{(pointwise) 90\% pointwise credible interval for the coherence}
+#' @references Y. Liu (2023)
+#' \emph{A Nonparametrically corrected likelihood for Bayesian spectral analysis of multivariate time series}
+#' PhD thesis, University of Auckland
+#' <https://hdl.handle.net/2292/65154> 
 #' @importFrom Rcpp evalCpp
 #' @useDynLib vnpc.avg, .registration = TRUE
 #' @export
@@ -42,7 +47,8 @@
 gibbs_vnpc_avg <- function(data,
                            seg_n=1,
                            truncation=FALSE,
-                           trunc_N=NULL,
+                           trunc_freq=NULL,
+                           trunc_freq_lim=NULL,
                            corrected=FALSE,
                            var.order=NULL,
                            Ntotal,
@@ -126,7 +132,8 @@ gibbs_vnpc_avg <- function(data,
                                     mcmc_params=mcmc_params,
                                     seg_n=seg_n,
                                     truncation=truncation,
-                                    trunc_N=trunc_N,
+                                    trunc_freq=trunc_freq,
+                                    trunc_freq_lim=trunc_freq_lim,
                                     corrected=corrected,
                                     prior_params=prior_params,
                                     model_params=model_params)

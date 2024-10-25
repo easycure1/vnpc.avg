@@ -25,7 +25,8 @@ gibbs_m_avg_nuisance <- function(data,
                                  mcmc_params,
                                  seg_n=1,
                                  truncation=FALSE,
-                                 trunc_N=NULL,
+                                 trunc_freq=NULL,
+                                 trunc_freq_lim=NULL,
                                  corrected,
                                  prior_params,
                                  model_params) {
@@ -77,13 +78,23 @@ gibbs_m_avg_nuisance <- function(data,
   
   # Trunction of the Fourier transforms
   if (truncation) {
-    stopifnot(!is.null(trunc_N))
-    if (trunc_N <= 0 || trunc_N > (n+2)/2) {
-      stop("The number of trunction should be an integer that is positive and smaller than the length of the Fourier transform of each segment")
-    }
     truncation <- truncation
-    trunc_N <- trunc_N
-    n <- trunc_N*2 ##? need to confirm
+    stopifnot(!is.null(trunc_freq) && !is.null(trunc_freq_lim))
+    if (trunc_freq%%1 != 0) {
+      stop("The sampling frequency needs to be an integer")
+    }
+    if (trunc_freq_lim[1]%%1 != 0) {
+      stop("The frequency bound of the truncated data should be an integer")
+    }
+    if (length(trunc_freq_lim) == 1) {
+      trunc_N <- trunc_freq * trunc_freq_lim
+      n <- trunc_N*2 ##? need to confirm
+    } else if (length(trunc_freq_lim) == 2) {
+      trunc_N_upper <- trunc_freq_lim[2] * trunc_freq
+      trunc_N_lower <- trunc_freq_lim[1] * trunc_freq
+      n <- (trunc_N_upper - trunc_N_lower) * 2
+      n_upper <- trunc_N_upper * 2
+    }
   }
 
   # MCMC parameters
@@ -191,11 +202,21 @@ gibbs_m_avg_nuisance <- function(data,
     boundaryFrequecies <- 1
   }
 
-  omega <- omegaFreq(n)
-  N <- length(omega)
-  lambda <- pi * omega
-  pdgrm_scaling <- c(pi, rep(2*pi, n-1))
-  if (!(n%%2)) pdgrm_scaling[n] <- pi
+  if (length(trunc_freq_lim) == 1) {
+    omega <- omegaFreq(n)
+    N <- length(omega)
+    lambda <- pi * omega
+    pdgrm_scaling <- c(pi, rep(2*pi, n-1))
+    if (!(n%%2)) pdgrm_scaling[n] <- pi
+  } else {
+    omega <- omegaFreq(n_upper)
+    N <- length(omega)
+    lambda <- pi * omega
+    pdgrm_scaling <- c(pi, rep(2*pi, n_upper-1))
+    if (!(n_upper%%2)) pdgrm_scaling[n_upper] <- pi
+  }
+  
+  
 
   # Pre-computed beta mixtures up to kmax as list
   db.list <- dbList(n, kmax, normalized=normalizedBernsteins,
@@ -323,15 +344,28 @@ gibbs_m_avg_nuisance <- function(data,
     ## Storage segmented data
     if (seg_n == 1) {
       noise <- array(rep(NA, n_init*d*1), dim = c(n_init, d, 1))
-      FZ <- array(rep(NA, N*d*1), dim = c(N, d, 1))
       noise[,,1] <- get_noise(data_new[,,1], theta[,i])
-      FZ[,,1] <- mdft(noise[,,1])[1:N,]
+      if (length(trunc_freq_lim) == 1) {
+        FZ <- array(rep(NA, N*d*1), dim = c(N, d, 1))
+        FZ[,,1] <- mdft(noise[,,1])[1:N,]  
+      } else {
+        FZ <- array(rep(NA, (N-trunc_freq_lim[1])*d*1), dim = c(N-trunc_freq_lim[1], d, 1))
+        FZ[,,1] <- mdft(noise[,,1])[trunc_freq_lim[1]:N,]
+      }
     } else {
       noise <- array(rep(NA, n_init*d*seg_n), dim = c(n_init, d, seg_n))
-      FZ <- array(rep(NA, N*d*seg_n), dim = c(N, d, seg_n))
-      for (ii in 1:seg_n) {
-        noise[,,ii] <- get_noise(data_new[,,ii], theta[,i])
-        FZ[,,ii] <- mdft(noise[,,ii])[1:N,]
+      if (length(trunc_freq_lim) == 1) {
+        FZ <- array(rep(NA, N*d*seg_n), dim = c(N, d, seg_n))
+        for (ii in 1:seg_n) {
+          noise[,,ii] <- get_noise(data_new[,,ii], theta[,i])
+          FZ[,,ii] <- mdft(noise[,,ii])[1:N,]
+        }
+      } else {
+        FZ <- array(rep(NA, (N-trunc_freq_lim[1])*d*seg_n), dim = c(N-trunc_freq_lim[1], d, seg_n))
+        for (ii in 1:seg_n) {
+          noise[,,ii] <- get_noise(data_new[,,ii], theta[,i])
+          FZ[,,ii] <- mdft(noise[,,ii])[trunc_freq_lim[1]:N,]
+        }
       }
     }
 
@@ -832,8 +866,12 @@ gibbs_m_avg_nuisance <- function(data,
   theta <- theta[,keep,drop=F]
 
   W <- array(dim=c(d,d,L,length(keep))) # for convenience
-  fpsd.sample <- array(NA, dim=c(d, d, N, length(keep)))
-
+  if (length(trunc_freq_lim) == 1) {
+    fpsd.sample <- array(NA, dim=c(d, d, N, length(keep)))
+  } else {
+    fpsd.sample <- array(NA, dim=c(d, d, N-trunc_freq_lim[1], length(keep)))
+  }
+  
 
   # store the coherence
   comb_t_n <- ncol(combn(d, 2))
