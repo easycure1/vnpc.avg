@@ -6,10 +6,11 @@
 \usage{
 gibbs_m_avg_nuisance(
   data,
+  samp_freq = 2 * pi,
   mcmc_params,
   seg_n = 1,
   truncation = FALSE,
-  trunc_N = NULL,
+  trunc_freq_lim = NULL,
   corrected,
   prior_params,
   model_params

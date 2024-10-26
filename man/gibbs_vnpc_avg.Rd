@@ -6,9 +6,10 @@
 \usage{
 gibbs_vnpc_avg(
   data,
+  samp_freq = 2 * pi,
   seg_n = 1,
   truncation = FALSE,
-  trunc_N = NULL,
+  trunc_freq_lim = NULL,
   corrected = FALSE,
   var.order = NULL,
   Ntotal,
@@ -36,13 +37,15 @@ gibbs_vnpc_avg(
 \arguments{
 \item{data}{numerical matrix}
 
+\item{samp_freq}{sampling frequency (default = 2*pi)}
+
 \item{seg_n}{number of segments (integer >= 1)}
 
-\item{truncation}{flag indicating whether the data needs to be truncated (default = FALSE)}
+\item{truncation}{flag indicating whether the data needs to be truncated (default = FALSE).}
 
-\item{trunc_N}{length of the truncation of data if truncation = TRUE}
+\item{trunc_freq_lim}{frequency bounds of the truncated data, an positive integer or a 2-dimensional vector with lower and upper bounds being integers, used for truncation = TRUE only.}
 
-\item{corrected}{flag indicating whether the corrected likelihood is used (default = FALSE)}
+\item{corrected}{flag indicating whether the corrected likelihood is used (default = FALSE).}
 
 \item{var.order}{VAR order for the parametric working model}
 
@@ -95,4 +98,10 @@ list containing the following fields:
 }
 \description{
 Obtain samples of the posterior of the multivariate corrected likelihood in conjuction with an Hpd AGamma process prior on the spectral density matrix
+}
+\references{
+Y. Liu (2023)
+\emph{A Nonparametrically corrected likelihood for Bayesian spectral analysis of multivariate time series}
+PhD thesis, University of Auckland
+<https://hdl.handle.net/2292/65154>
 }
