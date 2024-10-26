@@ -9,9 +9,11 @@ print_interval <- 500 # TODO 10000
 
 
 
-mcmc_vnp_avg <- vnpc.avg::gibbs_vnpc_avg(data = data[1:1024,],
+mcmc_vnp_avg <- vnpc.avg::gibbs_vnpc_avg(data = data[1:32768,],
+                                         samp_freq = 16, #sampling frequency
+                                         truncation = T,
+                                         trunc_freq_lim = c(5, 128), #truncation bounds
                                          seg_n = 1,
                                          Ntotal = Ntotal,
-                                         burnin = burnin,
-                                         print_interval = print_interval)
+                                         burnin = burnin)
 save(mcmc_vnp_avg, file = "et_results.RData")
