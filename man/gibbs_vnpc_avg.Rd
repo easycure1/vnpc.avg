@@ -6,9 +6,9 @@
 \usage{
 gibbs_vnpc_avg(
   data,
+  samp_freq = 2 * pi,
   seg_n = 1,
   truncation = FALSE,
-  trunc_freq = NULL,
   trunc_freq_lim = NULL,
   corrected = FALSE,
   var.order = NULL,
@@ -37,11 +37,11 @@ gibbs_vnpc_avg(
 \arguments{
 \item{data}{numerical matrix}
 
+\item{samp_freq}{sampling frequency (default = 2*pi)}
+
 \item{seg_n}{number of segments (integer >= 1)}
 
 \item{truncation}{flag indicating whether the data needs to be truncated (default = FALSE).}
-
-\item{trunc_freq}{sampling frequency, used when truncation = TRUE only.}
 
 \item{trunc_freq_lim}{frequency bounds of the truncated data, an positive integer or a 2-dimensional vector with lower and upper bounds being integers, used for truncation = TRUE only.}
 
