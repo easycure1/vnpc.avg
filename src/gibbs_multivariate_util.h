@@ -17,7 +17,7 @@ arma::cx_cube varma_transfer2psd(Rcpp::ComplexVector transfer_ar_,
 arma::cx_cube transfer_polynomial(Rcpp::NumericVector lambda, arma::mat coef);
 arma::cube realValuedPsd(Rcpp::ComplexVector f_);
 double llike_whittle(const arma::cx_mat& FZ, const arma::cx_cube& f);
-double llike_whittle_sum(const arma::cx_mat& FZ, const arma::cx_cube& f);
+double llike_whittle_sum(const arma::cx_mat& FZ, const arma::cx_cube& f, int freq);
 arma::mat epsilon_var(arma::mat zt, arma::mat ar);
 double sldmvnorm(arma::mat z_t, arma::mat Sigma);
 arma::mat acvToeplitz(arma::mat acv);

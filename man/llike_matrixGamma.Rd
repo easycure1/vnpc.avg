@@ -5,6 +5,7 @@
 \title{Likelihood computation}
 \usage{
 llike_matrixGamma(
+  samp_freq,
   omega,
   FZ,
   r,

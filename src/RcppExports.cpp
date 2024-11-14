@@ -144,14 +144,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // llike_whittle_sum
-double llike_whittle_sum(const arma::cx_cube& FZ, const arma::cx_cube& f);
-RcppExport SEXP _vnpc_avg_llike_whittle_sum(SEXP FZSEXP, SEXP fSEXP) {
+double llike_whittle_sum(const arma::cx_cube& FZ, const arma::cx_cube& f, int freq);
+RcppExport SEXP _vnpc_avg_llike_whittle_sum(SEXP FZSEXP, SEXP fSEXP, SEXP freqSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::cx_cube& >::type FZ(FZSEXP);
     Rcpp::traits::input_parameter< const arma::cx_cube& >::type f(fSEXP);
-    rcpp_result_gen = Rcpp::wrap(llike_whittle_sum(FZ, f));
+    Rcpp::traits::input_parameter< int >::type freq(freqSEXP);
+    rcpp_result_gen = Rcpp::wrap(llike_whittle_sum(FZ, f, freq));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -499,7 +500,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vnpc_avg_transfer_polynomial", (DL_FUNC) &_vnpc_avg_transfer_polynomial, 2},
     {"_vnpc_avg_realValuedPsd", (DL_FUNC) &_vnpc_avg_realValuedPsd, 1},
     {"_vnpc_avg_llike_whittle", (DL_FUNC) &_vnpc_avg_llike_whittle, 2},
-    {"_vnpc_avg_llike_whittle_sum", (DL_FUNC) &_vnpc_avg_llike_whittle_sum, 2},
+    {"_vnpc_avg_llike_whittle_sum", (DL_FUNC) &_vnpc_avg_llike_whittle_sum, 3},
     {"_vnpc_avg_epsilon_var", (DL_FUNC) &_vnpc_avg_epsilon_var, 2},
     {"_vnpc_avg_epsilon_var_n", (DL_FUNC) &_vnpc_avg_epsilon_var_n, 2},
     {"_vnpc_avg_sldmvnorm", (DL_FUNC) &_vnpc_avg_sldmvnorm, 2},

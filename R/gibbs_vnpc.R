@@ -3,6 +3,7 @@
 #' Obtain samples of the posterior of the multivariate corrected likelihood in conjuction with an Hpd AGamma process prior on the spectral density matrix
 #' @param data numerical matrix
 #' @param samp_freq sampling frequency (default = 2*pi)
+#' @param trunc_freq sampling frequency for truncated data (default = 2*pi)
 #' @param seg_n number of segments (integer >= 1)
 #' @param truncation flag indicating whether the data needs to be truncated (default = FALSE).
 #' @param trunc_freq_lim frequency bounds of the truncated data, an positive integer or a 2-dimensional vector with lower and upper bounds being integers, used for truncation = TRUE only.
@@ -46,6 +47,7 @@
 #' @examples
 gibbs_vnpc_avg <- function(data,
                            samp_freq=2*pi,
+                           trunc_freq=2*pi,
                            seg_n=1,
                            truncation=FALSE,
                            trunc_freq_lim=NULL,
@@ -102,10 +104,10 @@ gibbs_vnpc_avg <- function(data,
   
   if (truncation) {
     if (length(trunc_freq_lim) == 1) {
-      trunc_N <- samp_freq * trunc_freq_lim
+      trunc_N <- trunc_freq * trunc_freq_lim
     } else if (length(trunc_freq_lim) == 2) {
-      trunc_N_upper <- trunc_freq_lim[2] * samp_freq
-      trunc_N_lower <- trunc_freq_lim[1] * samp_freq
+      trunc_N_upper <- trunc_freq_lim[2] * trunc_freq
+      trunc_N_lower <- trunc_freq_lim[1] * trunc_freq
       trunc_N <- trunc_N_upper - trunc_N_lower
     }
     L <- max(L, length(trunc_N) ^ (1 / 3))
@@ -137,6 +139,7 @@ gibbs_vnpc_avg <- function(data,
   model_params <- psd_dummy_model()
   mcmc_VNPC <- gibbs_m_avg_nuisance(data=data,
                                     samp_freq=samp_freq,
+                                    trunc_freq=trunc_freq,
                                     mcmc_params=mcmc_params,
                                     seg_n=seg_n,
                                     truncation=truncation,

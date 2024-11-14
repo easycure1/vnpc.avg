@@ -4,7 +4,7 @@
 \alias{mpdgrm}
 \title{Compute Periodgram matrix from (complex-valued) Fourier coefficients in beyondWhittle(fourier_transform.R)}
 \usage{
-mpdgrm(FZ)
+mpdgrm(FZ, freq)
 }
 \description{
 Compute Periodgram matrix from (complex-valued) Fourier coefficients in beyondWhittle(fourier_transform.R)

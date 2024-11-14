@@ -68,14 +68,14 @@ midft <- function(FZ, real=F) {
 #' Compute Periodgram matrix from (complex-valued) Fourier coefficients in beyondWhittle(fourier_transform.R)
 #' @details see (4.7) in Meier (2018)
 #' @keywords internal
-mpdgrm <- function(FZ) {
+mpdgrm <- function(FZ, freq) {
   N <- nrow(FZ)
   d <- ncol(FZ)
   res <- array(data=NA, dim=c(d,d,N))
   for (j in 1:N) {
     res[,,j] <- FZ[j,] %*% Adj(FZ[j,])
   }
-  res <- res / 2 / pi
+  res <- res / freq
   return(res)
 }
 

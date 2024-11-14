@@ -5,7 +5,7 @@
 \title{Sum of the segmented log Whittle likelihood over all frequencies
 Based on the complex Wishart distribution}
 \usage{
-llike_whittle_sum(FZ, f)
+llike_whittle_sum(FZ, f, freq)
 }
 \description{
 Sum of the segmented log Whittle likelihood over all frequencies

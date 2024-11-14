@@ -117,7 +117,7 @@ double llike_whittle(const arma::cx_mat& FZ, const arma::cx_cube& f) {
 //' Based on the complex Wishart distribution
 //' @keywords internal
 // [[Rcpp::export]]
-double llike_whittle_sum(const arma::cx_cube& FZ, const arma::cx_cube& f) {
+double llike_whittle_sum(const arma::cx_cube& FZ, const arma::cx_cube& f, int freq) {
   const int d = FZ.n_cols;
   const int N = FZ.n_rows;
   const int K = FZ.n_slices;
@@ -127,11 +127,11 @@ double llike_whittle_sum(const arma::cx_cube& FZ, const arma::cx_cube& f) {
     for (int k=0; k<K; ++k) {
       mpg_sum += arma::trans(FZ.slice(k).row(j)) * FZ.slice(k).row(j);
     }
-    const arma::cx_mat f_new(2 * M_PI / K * f.slice(j));
-    std::complex<double> tr = arma::trace(arma::inv(f_new) * mpg_sum / K);
-    res += K * arma::log_det(f_new).real() + tr.real();
+    const arma::cx_mat f_new(freq * f.slice(j));
+    std::complex<double> tr = arma::trace(arma::inv(f_new) * mpg_sum);
+    res += K * arma::log_det(f_new).real() + tr.real() / K;
   }
-  
+   
   return -res;
 }
 

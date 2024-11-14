@@ -7,6 +7,7 @@
 gibbs_vnpc_avg(
   data,
   samp_freq = 2 * pi,
+  trunc_freq = 2 * pi,
   seg_n = 1,
   truncation = FALSE,
   trunc_freq_lim = NULL,
@@ -38,6 +39,8 @@ gibbs_vnpc_avg(
 \item{data}{numerical matrix}
 
 \item{samp_freq}{sampling frequency (default = 2*pi)}
+
+\item{trunc_freq}{sampling frequency for truncated data (default = 2*pi)}
 
 \item{seg_n}{number of segments (integer >= 1)}
 

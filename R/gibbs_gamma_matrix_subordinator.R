@@ -23,6 +23,7 @@
 #' @keywords internal
 gibbs_m_avg_nuisance <- function(data,
                                  samp_freq=2*pi,
+                                 trunc_freq=2*pi,
                                  mcmc_params,
                                  seg_n=1,
                                  truncation=FALSE,
@@ -66,6 +67,10 @@ gibbs_m_avg_nuisance <- function(data,
   #  stop(TXT)
   #}
   
+  # Sampling frequency
+  stopifnot(!is.null(samp_freq))
+  samp_freq <- samp_freq
+  
   # Segments
   stopifnot(!is.null(seg_n)); stopifnot(seg_n>0) 
   seg_n <- seg_n
@@ -76,10 +81,10 @@ gibbs_m_avg_nuisance <- function(data,
     data_new[,,ii] <- data[(n*(ii-1)+1):(n*ii),]
   }
   
-  # Sampling frequency
-  stopifnot(!is.null(samp_freq))
-  samp_freq <- samp_freq
-  if (samp_freq > n) {
+  # Sampling frequency for truncated data
+  stopifnot(!is.null(trunc_freq))
+  trunc_freq <- trunc_freq
+  if (trunc_freq > n) {
     stop("The sampling frequency needs to be smaller than the data/segment length.") ## need to confirm
   }
   
@@ -88,14 +93,16 @@ gibbs_m_avg_nuisance <- function(data,
     truncation <- truncation
     stopifnot(!is.null(trunc_freq_lim))
     if (length(trunc_freq_lim) == 1) {
-      trunc_N <- samp_freq * trunc_freq_lim
+      trunc_N <- trunc_freq * trunc_freq_lim
       n <- trunc_N*2 ##? need to confirm
     } else if (length(trunc_freq_lim) == 2) {
-      trunc_N_upper <- trunc_freq_lim[2] * samp_freq
-      trunc_N_lower <- trunc_freq_lim[1] * samp_freq
+      trunc_N_upper <- trunc_freq_lim[2] * trunc_freq
+      trunc_N_lower <- trunc_freq_lim[1] * trunc_freq
       n <- (trunc_N_upper - trunc_N_lower) * 2
       n_upper <- trunc_N_upper * 2
     }
+  } else {
+    trunc_N_lower <- 0
   }
 
   # MCMC parameters
@@ -202,21 +209,29 @@ gibbs_m_avg_nuisance <- function(data,
   } else {
     boundaryFrequecies <- 1
   }
-
-  if (length(trunc_freq_lim) == 1) {
+  
+  if (truncation) {
+    if (length(trunc_freq_lim) == 1) {
+      omega <- omegaFreq(n)
+      N <- length(omega)
+      lambda <- pi * omega
+      pdgrm_scaling <- c(pi, rep(2*pi, n-1))
+      if (!(n%%2)) pdgrm_scaling[n] <- pi
+    } else {
+      omega <- omegaFreq(n_upper)
+      N <- length(omega)
+      lambda <- pi * omega
+      pdgrm_scaling <- c(pi, rep(2*pi, n_upper-1))
+      if (!(n_upper%%2)) pdgrm_scaling[n_upper] <- pi
+    }  
+  } else {
     omega <- omegaFreq(n)
     N <- length(omega)
     lambda <- pi * omega
     pdgrm_scaling <- c(pi, rep(2*pi, n-1))
     if (!(n%%2)) pdgrm_scaling[n] <- pi
-  } else {
-    omega <- omegaFreq(n_upper)
-    N <- length(omega)
-    lambda <- pi * omega
-    pdgrm_scaling <- c(pi, rep(2*pi, n_upper-1))
-    if (!(n_upper%%2)) pdgrm_scaling[n_upper] <- pi
   }
-  
+
   
 
   # Pre-computed beta mixtures up to kmax as list
@@ -376,7 +391,8 @@ gibbs_m_avg_nuisance <- function(data,
       ## Needs to be updated for every proposal acceptance
       ##
       t0 <- Sys.time()
-      f.store <- lpost_matrixGamma(omega=omega,
+      f.store <- lpost_matrixGamma(samp_freq=samp_freq,
+                                   omega=omega,
                                    FZ=FZ,
                                    r=r[,i],
                                    U=U[,,,i],
@@ -463,7 +479,8 @@ gibbs_m_avg_nuisance <- function(data,
       while (k.star[j] < 3 || k.star[j] > kmax) {  # A bit hacky
         k.star[j] <- round(rt(1, 1)) + k.old[j]
       }
-      f.k.star <- lpost_matrixGamma(omega=omega,
+      f.k.star <- lpost_matrixGamma(samp_freq=samp_freq,
+                                    omega=omega,
                                     FZ=FZ,
                                     r=r[,i],
                                     U=U[,,,i],
@@ -504,7 +521,8 @@ gibbs_m_avg_nuisance <- function(data,
       Z.star[l] <- Z.star[l] + runif(1, -eps_Z[l], eps_Z[l])
       Z.star[l][Z.star[l] < 0] <- Z.star[l] + 1 # shift in [0,1]
       Z.star[l][Z.star[l] > 1] <- Z.star[l] - 1 # shift in [0,1]
-      f.Z.star <- lpost_matrixGamma(omega=omega,
+      f.Z.star <- lpost_matrixGamma(samp_freq=samp_freq,
+                                    omega=omega,
                                     FZ=FZ,
                                     r=r[,i],
                                     U=U[,,,i],
@@ -547,7 +565,8 @@ gibbs_m_avg_nuisance <- function(data,
         if (verbose) print_warn(paste0("Discaring r_", l, " prosal with value ", r.star[l], " due to numerics"))
         r[l, i+1] <- r[l, i]
       } else {
-        f.r.star <- lpost_matrixGamma(omega=omega,
+        f.r.star <- lpost_matrixGamma(samp_freq=samp_freq,
+                                      omega=omega,
                                       FZ=FZ,
                                       r=r.star,
                                       U=U[,,,i],
@@ -612,7 +631,8 @@ gibbs_m_avg_nuisance <- function(data,
         rejectedU <- T
       }
       if (!rejectedU) {
-        f.U.star <- lpost_matrixGamma(omega=omega,
+        f.U.star <- lpost_matrixGamma(samp_freq=samp_freq,
+                                      omega=omega,
                                       FZ=FZ,
                                       r=r[,i+1],
                                       U=U.star,
@@ -689,7 +709,8 @@ gibbs_m_avg_nuisance <- function(data,
                                mu_beta=mu_beta,        ## include stuff for prior computation, too
                                V_beta_inv=V_beta_inv,
                                sqrt_d=sqrt_d)  ##
-          f.phi.star <- lpost_matrixGamma(omega=omega,
+          f.phi.star <- lpost_matrixGamma(samp_freq=samp_freq,
+                                          omega=omega,
                                           FZ=FZ,
                                           r=r[,i+1],
                                           U=U[,,,i+1],
@@ -747,7 +768,8 @@ gibbs_m_avg_nuisance <- function(data,
       FZ_star <- mdft(noise_star)  # Frequency domain
 
       ##
-      f.theta.star <- lpost_matrixGamma(omega=omega,
+      f.theta.star <- lpost_matrixGamma(samp_freq=samp_freq,
+                                        omega=omega,
                                         FZ=FZ_star, # note
                                         r=r[,i+1],
                                         U=U[,,,i+1],
@@ -766,7 +788,8 @@ gibbs_m_avg_nuisance <- function(data,
                                         prior.cholesky=prior.cholesky,
                                         excludeBoundary=F, # note
                                         verbose=verbose)
-      f.theta <- lpost_matrixGamma(omega=omega,
+      f.theta <- lpost_matrixGamma(samp_freq=samp_freq,
+                                   omega=omega,
                                    FZ=FZ, # note
                                    r=r[,i+1],
                                    U=U[,,,i+1],
@@ -793,7 +816,8 @@ gibbs_m_avg_nuisance <- function(data,
                          theta_prop$lprop_theta_star)
       if (log(runif(1,0,1)) < alphaTheta) {
         theta[,i+1] <- theta_star
-        f.store <- lpost_matrixGamma(omega=omega,
+        f.store <- lpost_matrixGamma(samp_freq=samp_freq,
+                                     omega=omega,
                                      FZ=FZ_star, # note
                                      r=r[,i+1],
                                      U=U[,,,i+1],
