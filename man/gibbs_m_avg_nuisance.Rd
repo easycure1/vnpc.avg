@@ -7,6 +7,7 @@
 gibbs_m_avg_nuisance(
   data,
   samp_freq = 2 * pi,
+  trunc_freq = 2 * pi,
   mcmc_params,
   seg_n = 1,
   truncation = FALSE,

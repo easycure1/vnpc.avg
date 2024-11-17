@@ -30,7 +30,8 @@ e_ab <- function(x, a, b, d=1e-12) {
 ##
 #' Likelihood computation
 #' @keywords internal
-llike_matrixGamma <- function(omega,
+llike_matrixGamma <- function(samp_freq,
+                              omega,
                               FZ,
                               r,
                               U,
@@ -72,7 +73,8 @@ llike_matrixGamma <- function(omega,
   } else {
     # Sum of Whittle's likelihood of all segments
     ll <- llike_whittle_sum(FZ=FZ,
-                            f=f)
+                            f=f,
+                            freq=samp_freq)
   }
   return(ll)
 }
@@ -180,7 +182,8 @@ logdet_radialJacobian <- function(C_alpha, beta_vals, r_vals) {
 ##
 ## Log Posterior, unnormalized
 ##
-lpost_matrixGamma <- function(omega,
+lpost_matrixGamma <- function(samp_freq,
+                              omega,
                               FZ,
                               r,
                               U,
@@ -200,7 +203,8 @@ lpost_matrixGamma <- function(omega,
                               prior.cholesky,
                               excludeBoundary,
                               verbose) {
-  ll <- llike_matrixGamma(omega=omega,
+  ll <- llike_matrixGamma(samp_freq=samp_freq,
+                          omega=omega,
                           FZ=FZ,
                           r=r,
                           U=U,

@@ -87,8 +87,8 @@ llike_whittle <- function(FZ, f) {
 #' Sum of the segmented log Whittle likelihood over all frequencies
 #' Based on the complex Wishart distribution
 #' @keywords internal
-llike_whittle_sum <- function(FZ, f) {
-    .Call(`_vnpc_avg_llike_whittle_sum`, FZ, f)
+llike_whittle_sum <- function(FZ, f, freq) {
+    .Call(`_vnpc_avg_llike_whittle_sum`, FZ, f, freq)
 }
 
 #' Epsilon process (residuals) of VAR model in beyondWhittle(varma.cpp)
