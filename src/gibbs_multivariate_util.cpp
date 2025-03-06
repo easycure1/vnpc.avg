@@ -113,6 +113,27 @@ double llike_whittle(const arma::cx_mat& FZ, const arma::cx_cube& f) {
 }
 
 
+// Sum of the segmented log Whittle likelihood over all frequencies
+// Based on the complex Wishart distribution
+//double llike_whittle_sum(const arma::cx_cube& FZ, const arma::cx_cube& f, int freq) {
+//  const int d = FZ.n_cols;
+//  const int N = FZ.n_rows;
+//  const int K = FZ.n_slices;
+//  double res(0.0);
+//  for (int j=1; j<N-1; ++j) {
+//    arma::cx_mat mpg_sum(d, d, arma::fill::zeros);
+//    for (int k=0; k<K; ++k) {
+//      mpg_sum += arma::trans(FZ.slice(k).row(j)) * FZ.slice(k).row(j);
+//    }
+//    const arma::cx_mat f_new(freq * f.slice(j));
+//    std::complex<double> tr = arma::trace(arma::inv(f_new) * mpg_sum);
+//    res += K * arma::log_det(f_new).real() + tr.real();
+//  }
+//   
+//  return -res;
+//}
+
+
 //' Sum of the segmented log Whittle likelihood over all frequencies
 //' Based on the complex Wishart distribution
 //' @keywords internal
@@ -123,13 +144,12 @@ double llike_whittle_sum(const arma::cx_cube& FZ, const arma::cx_cube& f, int fr
   const int K = FZ.n_slices;
   double res(0.0);
   for (int j=1; j<N-1; ++j) {
-    arma::cx_mat mpg_sum(d, d, arma::fill::zeros);
+    arma::cx_mat mpg_avg(d, d, arma::fill::zeros);
     for (int k=0; k<K; ++k) {
-      mpg_sum += arma::trans(FZ.slice(k).row(j)) * FZ.slice(k).row(j);
+      mpg_avg += arma::trans(FZ.slice(k).row(j)) * FZ.slice(k).row(j) / freq;
     }
-    const arma::cx_mat f_new(freq * f.slice(j));
-    std::complex<double> tr = arma::trace(arma::inv(f_new) * mpg_sum);
-    res += K * arma::log_det(f_new).real() + tr.real() / K;
+    std::complex<double> tr = arma::trace(arma::inv(f.slice(j)) * mpg_avg);
+    res += K * arma::log_det(f.slice(j)).real() + K * tr.real();
   }
    
   return -res;
