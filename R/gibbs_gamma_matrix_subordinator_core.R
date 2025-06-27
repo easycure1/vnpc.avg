@@ -39,6 +39,7 @@ llike_matrixGamma <- function(samp_freq,
                               k,
                               db.list,
                               corrected,
+                              f_param_avg_half,
                               phi,
                               sigma_ar,
                               prior.q,
@@ -53,23 +54,28 @@ llike_matrixGamma <- function(samp_freq,
   }
   if (corrected) {
     # Corrected parametric likelihood
-    if (prior.q) {
-      ll <- llike_var_corrected_q(FZ=FZ,
-                                  ar=phi$ar,
-                                  f_param_half=phi$f_param_half,
-                                  f_param_half_trans=phi$f_param_half_trans,
-                                  sigma=sigma_ar,
-                                  q=f,
-                                  sqrt_d=phi$sqrt_d,
-                                  excludeBoundary=excludeBoundary)
-    } else {
-      ll <- llike_var_corrected(FZ=FZ,
-                                ar=phi$ar,
-                                f_param_half=phi$f_param_half,
-                                sigma=sigma_ar,
-                                f=f,
-                                excludeBoundary=excludeBoundary)
-    }
+    #if (prior.q) {
+    #  ll <- llike_var_corrected_q(FZ=FZ,
+    #                              ar=phi$ar,
+    #                              f_param_half=phi$f_param_half,
+    #                              f_param_half_trans=phi$f_param_half_trans,
+    #                              sigma=sigma_ar,
+    #                              q=f,
+    #                              sqrt_d=phi$sqrt_d,
+    #                              excludeBoundary=excludeBoundary)
+    #} else {
+    #  ll <- llike_var_corrected(FZ=FZ,
+    #                            ar=phi$ar,
+    #                            f_param_half=phi$f_param_half,
+    #                            sigma=sigma_ar,
+    #                            f=f,
+    #                            excludeBoundary=excludeBoundary)
+    #}
+    # Pseudo corrected likelihood
+    ll <- llike_corrected_whittle_sum(FZ=FZ,
+                                      f=f,
+                                      f_param_avg_half=f_param_avg_half,
+                                      freq=samp_freq)
   } else {
     # Sum of Whittle's likelihood of all segments
     ll <- llike_whittle_sum(FZ=FZ,
@@ -112,6 +118,7 @@ lprior_matrixGamma <- function(r,
                                eta,
                                Sigma_fun,
                                phi,
+                               f_param_avg_half,
                                verbose) {
 
   # # remove boundary stuff
@@ -197,6 +204,7 @@ lpost_matrixGamma <- function(samp_freq,
                               eta,
                               Sigma_fun, # prior parameter for AGamma process
                               corrected,
+                              f_param_avg_half,
                               phi,
                               sigma_ar, # corresponding to AR fit
                               prior.q,
@@ -212,6 +220,7 @@ lpost_matrixGamma <- function(samp_freq,
                           k=k,
                           db.list=db.list,
                           corrected=corrected,
+                          f_param_avg_half=f_param_avg_half,
                           phi=phi,
                           sigma_ar=sigma_ar,
                           prior.q=prior.q,

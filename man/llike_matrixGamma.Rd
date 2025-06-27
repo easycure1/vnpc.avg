@@ -14,6 +14,7 @@ llike_matrixGamma(
   k,
   db.list,
   corrected,
+  f_param_avg_half,
   phi,
   sigma_ar,
   prior.q,
