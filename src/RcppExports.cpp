@@ -156,6 +156,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// llike_corrected_whittle_sum
+double llike_corrected_whittle_sum(const arma::cx_cube& FZ, const arma::cx_cube& f, const arma::cx_cube& f_param_avg_half, int freq);
+RcppExport SEXP _vnpc_avg_llike_corrected_whittle_sum(SEXP FZSEXP, SEXP fSEXP, SEXP f_param_avg_halfSEXP, SEXP freqSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::cx_cube& >::type FZ(FZSEXP);
+    Rcpp::traits::input_parameter< const arma::cx_cube& >::type f(fSEXP);
+    Rcpp::traits::input_parameter< const arma::cx_cube& >::type f_param_avg_half(f_param_avg_halfSEXP);
+    Rcpp::traits::input_parameter< int >::type freq(freqSEXP);
+    rcpp_result_gen = Rcpp::wrap(llike_corrected_whittle_sum(FZ, f, f_param_avg_half, freq));
+    return rcpp_result_gen;
+END_RCPP
+}
 // epsilon_var
 arma::mat epsilon_var(arma::mat zt, arma::mat ar);
 RcppExport SEXP _vnpc_avg_epsilon_var(SEXP ztSEXP, SEXP arSEXP) {
@@ -501,6 +515,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vnpc_avg_realValuedPsd", (DL_FUNC) &_vnpc_avg_realValuedPsd, 1},
     {"_vnpc_avg_llike_whittle", (DL_FUNC) &_vnpc_avg_llike_whittle, 2},
     {"_vnpc_avg_llike_whittle_sum", (DL_FUNC) &_vnpc_avg_llike_whittle_sum, 3},
+    {"_vnpc_avg_llike_corrected_whittle_sum", (DL_FUNC) &_vnpc_avg_llike_corrected_whittle_sum, 4},
     {"_vnpc_avg_epsilon_var", (DL_FUNC) &_vnpc_avg_epsilon_var, 2},
     {"_vnpc_avg_epsilon_var_n", (DL_FUNC) &_vnpc_avg_epsilon_var_n, 2},
     {"_vnpc_avg_sldmvnorm", (DL_FUNC) &_vnpc_avg_sldmvnorm, 2},
