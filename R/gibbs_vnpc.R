@@ -45,12 +45,16 @@
 #' @export
 #'
 #' @examples
-gibbs_vnpc_avg <- function(data,
+gibbs_vnpc_avg <- function(data=NULL,
+                           mpg_avg,
+                           Nb,
                            samp_freq=2*pi,
                            trunc_freq=2*pi,
                            seg_n=1,
                            truncation=FALSE,
                            trunc_freq_lim=NULL,
+                           bspline=FALSE,
+                           degree_bs=3,
                            corrected=FALSE,
                            var.order=NULL,
                            Ntotal,
@@ -61,7 +65,8 @@ gibbs_vnpc_avg <- function(data,
                            adaption.N=burnin,
                            adaption.batchSize=50,
                            adaption.tar=0.44,
-                           eta=ncol(data),
+                           # eta=ncol(data),
+                           eta=dim(mpg_avg)[2],
                            omega_fun=create_omega_fun_from_beta_density(1,1,1),
                            Sigma_fun=my_Sigma_fun,
                            k.theta=0.01,
@@ -69,29 +74,33 @@ gibbs_vnpc_avg <- function(data,
                            trunc_l=0.1,
                            trunc_r=0.9,
                            coars=F,
+                           H0.alpha=NULL,
+                           H0.beta=NULL,
+                           MH=NULL,
                            L=20,
                            mu_beta=NULL,
                            V_beta=NULL,
                            sqrt_d=F) {
-  if (!is.matrix(data) || !is.numeric(data)) {
-    stop("'data' must be numeric matrix with d columns and n rows")
-  }
-
-  d <- ncol(data)
-  if (d<2) {
-    stop("This function is not suited for univariate time series. Use gibbs_npc instead")
-  }
-
-  if (max(abs(apply(data,2,mean,na.rm=T))) > 1e-4) {
-    data <- apply(data,2,center,na.rm=T)
-    warning("Data has been mean centered")
-  }
+  # if (!is.matrix(data) || !is.numeric(data)) {
+  #   stop("'data' must be numeric matrix with d columns and n rows")
+  # }
+  # 
+  # d <- ncol(data)
+  # if (d<2) {
+  #   stop("This function is not suited for univariate time series. Use gibbs_npc instead")
+  # }
+  # 
+  # if (max(abs(apply(data,2,mean,na.rm=T))) > 1e-4) {
+  #   data <- apply(data,2,center,na.rm=T)
+  #   warning("Data has been mean centered")
+  # }
+  d <- dim(mpg_avg)[2]
   if (eta <= d-1) {
     stop("eta must be a number greater than d-1")
   }
-  #if (omega_fun <= 0) {
+  # if (omega_fun <= 0) {
   #  stop("omega must be a positive number")
-  #}
+  # }
   mcmc_params <- list(Ntotal=Ntotal,
                       burnin=burnin,
                       thin=thin,
@@ -102,24 +111,24 @@ gibbs_vnpc_avg <- function(data,
                       adaption.targetAcceptanceRate=adaption.tar,
                       verbose=F)
   
-  if (truncation) {
-    if (length(trunc_freq_lim) == 1) {
-      trunc_N <- trunc_freq * trunc_freq_lim
-    } else if (length(trunc_freq_lim) == 2) {
-      trunc_N_upper <- trunc_freq_lim[2] * trunc_freq
-      trunc_N_lower <- trunc_freq_lim[1] * trunc_freq
-      trunc_N <- trunc_N_upper - trunc_N_lower
-    }
-    L <- max(L, length(trunc_N) ^ (1 / 3))
-  } else {
-    L <- max(L, (length(data) / seg_n) ^ (1 / 3))
-  }
-  L <- ceiling(L)
+  # if (truncation) {
+  #   if (length(trunc_freq_lim) == 1) {
+  #     trunc_N <- trunc_freq * trunc_freq_lim
+  #   } else if (length(trunc_freq_lim) == 2) {
+  #     trunc_N_upper <- trunc_freq_lim[2] * trunc_freq
+  #     trunc_N_lower <- trunc_freq_lim[1] * trunc_freq
+  #     trunc_N <- trunc_N_upper - trunc_N_lower
+  #   }
+  #   L <- max(L, length(trunc_N) ^ (1 / 3))
+  # } else {
+  #   L <- max(L, (length(data) / seg_n) ^ (1 / 3))
+  # }
+  # L <- ceiling(L)
   
-  if (corrected) {
-    mu_beta <- rep(1e-4, ncol(data)*ncol(data)*var.order)
-    V_beta <- diag(ncol(data)*ncol(data)*var.order)*1e4
-  }
+  # if (corrected) {
+  #   mu_beta <- rep(1e-4, ncol(data)*ncol(data)*var.order)
+  #   V_beta <- diag(ncol(data)*ncol(data)*var.order)*1e4
+  # }
   prior_params <- list(prior.cholesky=F,
                        var.order=var.order,
                        eta=eta,
@@ -138,12 +147,19 @@ gibbs_vnpc_avg <- function(data,
                        sqrt_d=sqrt_d)
   model_params <- psd_dummy_model()
   mcmc_VNPC <- gibbs_m_avg_nuisance(data=data,
+                                    mpg_avg=mpg_avg,
+                                    Nb=Nb,
                                     samp_freq=samp_freq,
                                     trunc_freq=trunc_freq,
                                     mcmc_params=mcmc_params,
                                     seg_n=seg_n,
                                     truncation=truncation,
                                     trunc_freq_lim=trunc_freq_lim,
+                                    bspline=bspline,
+                                    degree_bs=degree_bs,
+                                    H0.alpha=H0.alpha,
+                                    H0.beta=H0.beta,
+                                    MH=MH,
                                     corrected=corrected,
                                     prior_params=prior_params,
                                     model_params=model_params)

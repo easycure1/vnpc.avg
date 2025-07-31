@@ -154,3 +154,31 @@ fast_ift <- compiler::cmpfun(function(x, real=T, TOL=1e-15) {
   return(Z)
 })
 
+
+#' @details B-Splines basis
+#' Call sPline() from the package splines2
+#' fixed internal knots
+#' @keywords internal
+dbspline <- function(omega, knots, degree) {
+  #knots <- knots[-which((knots==0)|(abs(log(knots))<1e-8))]
+  #dbs <- splines2::mSpline(x = omega, knots = knots, degree = degree, intercept = T)  
+  #dbs[which(dbs==0)] <- 1e-200 # TODO for numerical stability -- is this correct or a better way for this???
+  
+  knots.mult <- c(rep(knots[1], degree), knots, rep(knots[length(knots)], degree))
+  nknots = length(knots.mult)  # Number of knots including external knots
+  
+  B <- splines::splineDesign(knots.mult, omega, ord = degree + 1, outer.ok = TRUE)
+  
+  # Trivial normalisation formula
+  bs_int = (knots.mult[-(1:(degree + 1))] - knots.mult[-((nknots - degree):nknots)]) / (degree + 1)
+  if (any(bs_int == 0)) bs_int[which(bs_int == 0)] = Inf  # Makes B.norm = 0 rather than NaN
+  
+  B.norm <- t(B) / bs_int  # Normalise
+  
+  B.norm[which(B.norm==0)] <- 1e-200 # TODO for numerical stability -- is this correct or a better way for this???
+  
+  return(B.norm)
+}
+
+
+

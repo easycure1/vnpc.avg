@@ -5,7 +5,19 @@
 \title{Construct psd mixture. See (5.3). We do not use the smoothing Choleksy components
 method, so delete that in the future. This is get_f_matrix() in beyondWhittle(gibbs_vnp_help.cpp)}
 \usage{
-get_f_matrix(U, r, Z, k, db.list, prior.cholesky)
+get_f_matrix(
+  omega,
+  U,
+  r,
+  Z,
+  V,
+  W_DP,
+  k,
+  db.list,
+  prior.cholesky,
+  bspline,
+  degree_bs
+)
 }
 \description{
 Construct psd mixture. See (5.3). We do not use the smoothing Choleksy components

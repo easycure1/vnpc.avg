@@ -32,12 +32,18 @@ e_ab <- function(x, a, b, d=1e-12) {
 #' @keywords internal
 llike_matrixGamma <- function(samp_freq,
                               omega,
+                              mpg_avg,
+                              Nb,
                               FZ,
                               r,
                               U,
                               Z,
                               k,
                               db.list,
+                              bspline,
+                              degree_bs,
+                              V,
+                              W,
                               corrected,
                               f_param_avg_half,
                               phi,
@@ -46,7 +52,7 @@ llike_matrixGamma <- function(samp_freq,
                               prior.cholesky,
                               excludeBoundary,
                               verbose) {
-  f <- get_f_matrix(U, r, Z, k, db.list, prior.cholesky)
+  f <- get_f_matrix(omega, U, r, Z, V, W, k, db.list, prior.cholesky, bspline, degree_bs)
   # Stay numerically stable
   if (numericalUnstable(f, excludeBoundary=F)) {
     if (verbose) print_warn("Discarding f in likelihood, because of numerical instablity")
@@ -78,9 +84,12 @@ llike_matrixGamma <- function(samp_freq,
                                       freq=samp_freq)
   } else {
     # Sum of Whittle's likelihood of all segments
-    ll <- llike_whittle_sum(FZ=FZ,
+    # ll <- llike_whittle_sum(FZ=FZ,
+    #                         f=f,
+    #                         freq=samp_freq)
+    ll <- llike_whittle_avg(mpg_avg=mpg_avg,
                             f=f,
-                            freq=samp_freq)
+                            Nb=Nb)
   }
   return(ll)
 }
@@ -88,7 +97,7 @@ llike_matrixGamma <- function(samp_freq,
 #' Construct psd mixture. See (5.3). We do not use the smoothing Choleksy components
 #' method, so delete that in the future. This is get_f_matrix() in beyondWhittle(gibbs_vnp_help.cpp)
 #' @keywords internal
-get_f_matrix <- function(U, r, Z, k, db.list, prior.cholesky) {
+get_f_matrix <- function(omega, U, r, Z, V, W_DP, k, db.list, prior.cholesky, bspline, degree_bs) {
   W <- cubeTimesVector(U, r) # get ordinate matrices W from polar decomposition (r,U)
   if (prior.cholesky) {
     # smooth Cholesky components of Gamma Measure with d*d Bernstein polynomials
@@ -98,7 +107,16 @@ get_f_matrix <- function(U, r, Z, k, db.list, prior.cholesky) {
     w <- get_w_rcpp(W, Z, k)   # accumulate weight matrices w for the k mixtures from (Z,W)-tuples [abscissa Z, ordinate W]
     w[,,1] <- Re(w[,,1]) # ensure that f(0) is spd (not complex)
     w[,,k] <- Re(w[,,k]) # ensure that f(pi) is spd (not complex)
-    f <- get_mix_rcpp(w, db.list[[k]]) # get Bernstein-mixture with weight matrices w
+    if (bspline) {
+      p <- pFromV(V)
+      newk <- k - degree_bs # This is the denominator for the DP
+      knots.diffs <- mixtureWeight_DP(p, W_DP, newk)
+      knots <- c(0, cumsum(knots.diffs))
+      dbs <- dbspline(omega, knots, degree_bs)
+      f <- get_mix_rcpp_bs(w, dbs) # get B-spline-mixture with weight matrices w
+    } else {
+      f <- get_mix_rcpp(w, db.list[[k]]) # get Bernstein-mixture with weight matrices w
+    }
   }
   return(f)
 }
@@ -115,6 +133,12 @@ lprior_matrixGamma <- function(r,
                                C_alpha,
                                omega_fun,
                                k.theta,
+                               bspline,
+                               V_DP,
+                               W_DP,
+                               H0.alpha,
+                               H0.beta,
+                               MH,
                                eta,
                                Sigma_fun,
                                phi,
@@ -158,6 +182,12 @@ lprior_matrixGamma <- function(r,
   #   #print(Sigma_vals)
   #   stop("Error in alpha_fun")
   # })
+  
+  # priors for B-splines
+  if (bspline) {
+    lp <- lp + (MH - 1) * sum(log(1 - V_DP)) +
+      sum((H0.alpha - 1) * log(W_DP) + (H0.beta - 1) * log(1 - W_DP))
+  }
 
   return(lp)
 }
@@ -191,6 +221,8 @@ logdet_radialJacobian <- function(C_alpha, beta_vals, r_vals) {
 ##
 lpost_matrixGamma <- function(samp_freq,
                               omega,
+                              mpg_avg,
+                              Nb,
                               FZ,
                               r,
                               U,
@@ -201,6 +233,13 @@ lpost_matrixGamma <- function(samp_freq,
                               k.theta,
                               pdgrm,
                               db.list,
+                              bspline=F,
+                              degree_bs,
+                              V,
+                              W,
+                              H0.alpha,
+                              H0.beta,
+                              MH,
                               eta,
                               Sigma_fun, # prior parameter for AGamma process
                               corrected,
@@ -213,12 +252,18 @@ lpost_matrixGamma <- function(samp_freq,
                               verbose) {
   ll <- llike_matrixGamma(samp_freq=samp_freq,
                           omega=omega,
+                          mpg_avg=mpg_avg,
+                          Nb=Nb,
                           FZ=FZ,
                           r=r,
                           U=U,
                           Z=Z,
                           k=k,
                           db.list=db.list,
+                          bspline=bspline,
+                          degree_bs=degree_bs,
+                          V=V,
+                          W=W,
                           corrected=corrected,
                           f_param_avg_half=f_param_avg_half,
                           phi=phi,
@@ -234,6 +279,12 @@ lpost_matrixGamma <- function(samp_freq,
                            C_alpha=C_alpha,
                            omega_fun=omega_fun,
                            k.theta=k.theta,
+                           bspline=bspline,
+                           V_DP=V,
+                           W_DP=W,
+                           H0.alpha=H0.alpha,
+                           H0.beta=H0.beta,
+                           MH=MH,
                            eta=eta,
                            Sigma_fun=Sigma_fun,
                            phi=phi,

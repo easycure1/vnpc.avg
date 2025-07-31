@@ -6,12 +6,19 @@
 \usage{
 gibbs_m_avg_nuisance(
   data,
+  mpg_avg,
+  Nb,
   samp_freq = 2 * pi,
   trunc_freq = 2 * pi,
   mcmc_params,
   seg_n = 1,
   truncation = FALSE,
   trunc_freq_lim = NULL,
+  bspline = FALSE,
+  degree_bs = 3,
+  H0.alpha = NULL,
+  H0.beta = NULL,
+  MH = NULL,
   corrected,
   prior_params,
   model_params
