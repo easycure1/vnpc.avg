@@ -43,6 +43,54 @@ arma::cx_cube get_mix_rcpp(ComplexVector w_, arma::cx_mat densities) {
   return res;
 }
 
+
+//' C++ function for computing mixture weights of Bernstein-Mixtures given the probabilities p, values w, and degree k.
+//' @keywords internal
+// [[Rcpp::export]]
+NumericVector mixtureWeight_DP(NumericVector p, NumericVector w, unsigned k) {
+  typedef std::pair<double, double> wpType;
+  std::vector<wpType> wp;
+  for (unsigned l = 0; l < p.size(); ++l) {
+    wp.push_back(wpType(w[l], p[l]));
+  }
+  std::sort(wp.begin(), wp.end());
+  NumericVector weight(k);
+  unsigned l = 0;
+  for (unsigned j = 1; j <= k; ++j) {
+    weight[j-1] = 0;
+    double wMax = j / (double)k;
+    while (l < wp.size() && wp[l].first <= wMax) {
+      weight[j-1] += wp[l].second;
+      l += 1;
+    }
+  }
+  return weight;
+}
+
+
+//' Add W * bspline to the psd f
+//' @keywords internal
+// [[Rcpp::export]]
+arma::cx_cube get_mix_rcpp_bs(ComplexVector w_, arma::cx_mat densities) {
+  const arma::cx_cube w = cx_cube_from_ComplexVector(w_);
+  const unsigned n = densities.n_cols; // Note that the row represents the frequencies, which is consistent with the output of sPline()
+  const unsigned d_dim = w.n_rows;
+  const unsigned k = w.n_slices;
+  const unsigned kn = densities.n_cols; // Number of knots of B-splines
+  const arma::cx_mat pad_mat(d_dim, d_dim, arma::fill::zeros);
+  arma::cx_cube res(d_dim, d_dim, n);
+  for (unsigned i=0; i < n; ++i) {
+    res.slice(i) = pad_mat;
+  }
+  for (unsigned j=0; j < k; ++j) {
+    for (unsigned i=0; i < n; ++i) {
+      res.slice(i) += w.slice(j) * densities(j,i); // Only use the internal knots??? r=3 Check: if +2 is correct...
+    }
+  }
+  
+  return res;
+}
+
 //' Get the product of U and r for the construction of the Gamma process. See (5.7)
 //' This is inside of bernsteinGammaPsd::get_W() in beyondWhittle(bernstein_gamma_psd.cpp).
 //' @keywords internal

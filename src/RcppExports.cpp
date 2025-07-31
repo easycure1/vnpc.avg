@@ -35,6 +35,31 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// mixtureWeight_DP
+NumericVector mixtureWeight_DP(NumericVector p, NumericVector w, unsigned k);
+RcppExport SEXP _vnpc_avg_mixtureWeight_DP(SEXP pSEXP, SEXP wSEXP, SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type p(pSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type w(wSEXP);
+    Rcpp::traits::input_parameter< unsigned >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(mixtureWeight_DP(p, w, k));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_mix_rcpp_bs
+arma::cx_cube get_mix_rcpp_bs(ComplexVector w_, arma::cx_mat densities);
+RcppExport SEXP _vnpc_avg_get_mix_rcpp_bs(SEXP w_SEXP, SEXP densitiesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< ComplexVector >::type w_(w_SEXP);
+    Rcpp::traits::input_parameter< arma::cx_mat >::type densities(densitiesSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_mix_rcpp_bs(w_, densities));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cubeTimesVector
 arma::cx_cube cubeTimesVector(ComplexVector U_, NumericVector r);
 RcppExport SEXP _vnpc_avg_cubeTimesVector(SEXP U_SEXP, SEXP rSEXP) {
@@ -153,6 +178,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::cx_cube& >::type f(fSEXP);
     Rcpp::traits::input_parameter< int >::type freq(freqSEXP);
     rcpp_result_gen = Rcpp::wrap(llike_whittle_sum(FZ, f, freq));
+    return rcpp_result_gen;
+END_RCPP
+}
+// llike_whittle_avg
+double llike_whittle_avg(const arma::cx_cube& mpg_avg, const arma::cx_cube& f, int Nb);
+RcppExport SEXP _vnpc_avg_llike_whittle_avg(SEXP mpg_avgSEXP, SEXP fSEXP, SEXP NbSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::cx_cube& >::type mpg_avg(mpg_avgSEXP);
+    Rcpp::traits::input_parameter< const arma::cx_cube& >::type f(fSEXP);
+    Rcpp::traits::input_parameter< int >::type Nb(NbSEXP);
+    rcpp_result_gen = Rcpp::wrap(llike_whittle_avg(mpg_avg, f, Nb));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -446,6 +484,29 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// pFromV
+NumericVector pFromV(NumericVector v);
+RcppExport SEXP _vnpc_avg_pFromV(SEXP vSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type v(vSEXP);
+    rcpp_result_gen = Rcpp::wrap(pFromV(v));
+    return rcpp_result_gen;
+END_RCPP
+}
+// vFromP
+NumericVector vFromP(NumericVector p, const double eps);
+RcppExport SEXP _vnpc_avg_vFromP(SEXP pSEXP, SEXP epsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const double >::type eps(epsSEXP);
+    rcpp_result_gen = Rcpp::wrap(vFromP(p, eps));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cholesky_xFromPhi
 NumericVector cholesky_xFromPhi(NumericVector phi);
 RcppExport SEXP _vnpc_avg_cholesky_xFromPhi(SEXP phiSEXP) {
@@ -505,6 +566,8 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_vnpc_avg_beta_fun_AGamma_process_cube", (DL_FUNC) &_vnpc_avg_beta_fun_AGamma_process_cube, 2},
     {"_vnpc_avg_get_mix_rcpp", (DL_FUNC) &_vnpc_avg_get_mix_rcpp, 2},
+    {"_vnpc_avg_mixtureWeight_DP", (DL_FUNC) &_vnpc_avg_mixtureWeight_DP, 3},
+    {"_vnpc_avg_get_mix_rcpp_bs", (DL_FUNC) &_vnpc_avg_get_mix_rcpp_bs, 2},
     {"_vnpc_avg_cubeTimesVector", (DL_FUNC) &_vnpc_avg_cubeTimesVector, 2},
     {"_vnpc_avg_get_w_rcpp", (DL_FUNC) &_vnpc_avg_get_w_rcpp, 3},
     {"_vnpc_avg_lalphaStar_AGamma", (DL_FUNC) &_vnpc_avg_lalphaStar_AGamma, 3},
@@ -515,6 +578,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vnpc_avg_realValuedPsd", (DL_FUNC) &_vnpc_avg_realValuedPsd, 1},
     {"_vnpc_avg_llike_whittle", (DL_FUNC) &_vnpc_avg_llike_whittle, 2},
     {"_vnpc_avg_llike_whittle_sum", (DL_FUNC) &_vnpc_avg_llike_whittle_sum, 3},
+    {"_vnpc_avg_llike_whittle_avg", (DL_FUNC) &_vnpc_avg_llike_whittle_avg, 3},
     {"_vnpc_avg_llike_corrected_whittle_sum", (DL_FUNC) &_vnpc_avg_llike_corrected_whittle_sum, 4},
     {"_vnpc_avg_epsilon_var", (DL_FUNC) &_vnpc_avg_epsilon_var, 2},
     {"_vnpc_avg_epsilon_var_n", (DL_FUNC) &_vnpc_avg_epsilon_var_n, 2},
@@ -539,6 +603,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vnpc_avg_matCond", (DL_FUNC) &_vnpc_avg_matCond, 1},
     {"_vnpc_avg_numericalUnstable", (DL_FUNC) &_vnpc_avg_numericalUnstable, 3},
     {"_vnpc_avg_acceptanceRate", (DL_FUNC) &_vnpc_avg_acceptanceRate, 1},
+    {"_vnpc_avg_pFromV", (DL_FUNC) &_vnpc_avg_pFromV, 1},
+    {"_vnpc_avg_vFromP", (DL_FUNC) &_vnpc_avg_vFromP, 2},
     {"_vnpc_avg_cholesky_xFromPhi", (DL_FUNC) &_vnpc_avg_cholesky_xFromPhi, 1},
     {"_vnpc_avg_cholseky_LFromx", (DL_FUNC) &_vnpc_avg_cholseky_LFromx, 1},
     {"_vnpc_avg_cholesky_jacobianLogDeterminant", (DL_FUNC) &_vnpc_avg_cholesky_jacobianLogDeterminant, 1},

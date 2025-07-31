@@ -156,6 +156,21 @@ double llike_whittle_sum(const arma::cx_cube& FZ, const arma::cx_cube& f, int fr
 }
 
 
+//' The log Whittle likelihood for the averaged periodogram
+//' @keywords internal
+// [[Rcpp::export]]
+double llike_whittle_avg(const arma::cx_cube& mpg_avg, const arma::cx_cube& f, int Nb) {
+  const int N = mpg_avg.n_slices;
+  double res(0.0);
+  for (int j=1; j<N-1; ++j) {
+    std::complex<double> tr = arma::trace(arma::inv(f.slice(j)) * mpg_avg.slice(j));
+    res += Nb * arma::log_det(f.slice(j)).real() + Nb * tr.real();
+  }
+  
+  return -res;
+}
+
+
 //' Sum of the segmented log pseudo corrected Whittle likelihood over all frequencies
 //' Based on the complex Wishart distribution
 //' @keywords internal

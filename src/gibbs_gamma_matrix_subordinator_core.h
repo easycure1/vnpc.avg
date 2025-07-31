@@ -5,6 +5,9 @@
 #include <Rcpp.h>
 
 arma::cx_cube get_mix_rcpp(Rcpp::ComplexVector w_, arma::cx_mat densities);
+Rcpp::NumericVector mixtureWeigth_DP(Rcpp::NumericVector p,
+                                     Rcpp::NumericVector w, unsigned k);
+arma::cx_cube get_mix_rcpp_bs(Rcpp::ComplexVector w_, arma::cx_mat densities);
 arma::cx_cube cubeTimesVector(Rcpp::ComplexVector U_, Rcpp::NumericVector r);
 arma::cx_cube get_w_rcpp(Rcpp::ComplexVector p_,
                          Rcpp::NumericVector Z,

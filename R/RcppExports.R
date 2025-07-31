@@ -18,6 +18,18 @@ get_mix_rcpp <- function(w_, densities) {
     .Call(`_vnpc_avg_get_mix_rcpp`, w_, densities)
 }
 
+#' C++ function for computing mixture weights of Bernstein-Mixtures given the probabilities p, values w, and degree k.
+#' @keywords internal
+mixtureWeight_DP <- function(p, w, k) {
+    .Call(`_vnpc_avg_mixtureWeight_DP`, p, w, k)
+}
+
+#' Add W * bspline to the psd f
+#' @keywords internal
+get_mix_rcpp_bs <- function(w_, densities) {
+    .Call(`_vnpc_avg_get_mix_rcpp_bs`, w_, densities)
+}
+
 #' Get the product of U and r for the construction of the Gamma process. See (5.7)
 #' This is inside of bernsteinGammaPsd::get_W() in beyondWhittle(bernstein_gamma_psd.cpp).
 #' @keywords internal
@@ -89,6 +101,12 @@ llike_whittle <- function(FZ, f) {
 #' @keywords internal
 llike_whittle_sum <- function(FZ, f, freq) {
     .Call(`_vnpc_avg_llike_whittle_sum`, FZ, f, freq)
+}
+
+#' The log Whittle likelihood for the averaged periodogram
+#' @keywords internal
+llike_whittle_avg <- function(mpg_avg, f, Nb) {
+    .Call(`_vnpc_avg_llike_whittle_avg`, mpg_avg, f, Nb)
 }
 
 #' Sum of the segmented log pseudo corrected Whittle likelihood over all frequencies
@@ -237,6 +255,19 @@ numericalUnstable <- function(f_, excludeBoundary, TOL = 1e-12) {
 #' @keywords internal
 acceptanceRate <- function(trace) {
     .Call(`_vnpc_avg_acceptanceRate`, trace)
+}
+
+#' Get p from V (DP inverse stick breaking)
+#' @keywords internal
+pFromV <- function(v) {
+    .Call(`_vnpc_avg_pFromV`, v)
+}
+
+#' Get v From P (DP inverse stick breaking)
+#' Note: p is assumed to have length L, i.e. it does NOT contain p_0
+#' @keywords internal
+vFromP <- function(p, eps = 1e-8) {
+    .Call(`_vnpc_avg_vFromP`, p, eps)
 }
 
 #' Get x from phi, see (62) in Mittelbach et al.

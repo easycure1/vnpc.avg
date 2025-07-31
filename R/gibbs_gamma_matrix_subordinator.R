@@ -22,12 +22,19 @@
 #'
 #' @keywords internal
 gibbs_m_avg_nuisance <- function(data,
+                                 mpg_avg,
+                                 Nb,
                                  samp_freq=2*pi,
                                  trunc_freq=2*pi,
                                  mcmc_params,
                                  seg_n=1,
                                  truncation=FALSE,
                                  trunc_freq_lim=NULL,
+                                 bspline=FALSE,
+                                 degree_bs=3,
+                                 H0.alpha=NULL,
+                                 H0.beta=NULL,
+                                 MH=NULL,
                                  corrected,
                                  prior_params,
                                  model_params) {
@@ -57,9 +64,14 @@ gibbs_m_avg_nuisance <- function(data,
 
   # Note: "Assuming symmetric theta proposals in MH steps"
 
-  stopifnot(ncol(data) > 1) # use 1d version instead
-  d <- ncol(data)
-  n <- nrow(data)
+  # stopifnot(ncol(data) > 1) # use 1d version instead
+  # d <- ncol(data)
+  # n <- nrow(data)
+  d <- dim(mpg_avg)[2]
+  trunc_N_upper <- trunc_freq_lim[2] * trunc_freq
+  trunc_N_lower <- trunc_freq_lim[1] * trunc_freq
+  n <- (trunc_N_upper - trunc_N_lower) * 2
+  n_upper <- trunc_N_upper * 2
 
   #if ((n%%2) != 0) {
   #  TXT <- "TODO: Adjust llike_whittle in gibbs_multivariate_util.R for odd lengths.
@@ -68,42 +80,42 @@ gibbs_m_avg_nuisance <- function(data,
   #}
   
   # Sampling frequency
-  stopifnot(!is.null(samp_freq))
-  samp_freq <- samp_freq
+  # stopifnot(!is.null(samp_freq))
+  # samp_freq <- samp_freq
   
   # Segments
-  stopifnot(!is.null(seg_n)); stopifnot(seg_n>0) 
-  seg_n <- seg_n
-  n <- nrow(data) / seg_n
-  n_init <- n ## Store the original full length of each segment
-  data_new <- array(rep(NA, n*d*seg_n), dim = c(n, d, seg_n))
-  for (ii in 1:seg_n) {
-    data_new[,,ii] <- data[(n*(ii-1)+1):(n*ii),]
-  }
+  # stopifnot(!is.null(seg_n)); stopifnot(seg_n>0) 
+  # seg_n <- seg_n
+  # n <- nrow(data) / seg_n
+  # n_init <- n ## Store the original full length of each segment
+  # data_new <- array(rep(NA, n*d*seg_n), dim = c(n, d, seg_n))
+  # for (ii in 1:seg_n) {
+  #   data_new[,,ii] <- data[(n*(ii-1)+1):(n*ii),]
+  # }
   
   # Sampling frequency for truncated data
-  stopifnot(!is.null(trunc_freq))
-  trunc_freq <- trunc_freq
-  if (trunc_freq > n) {
-    stop("The sampling frequency needs to be smaller than the data/segment length.") ## need to confirm
-  }
+  # stopifnot(!is.null(trunc_freq))
+  # trunc_freq <- trunc_freq
+  # if (trunc_freq > n) {
+  #   stop("The sampling frequency needs to be smaller than the data/segment length.") ## need to confirm
+  # }
   
   # Trunction of the Fourier transforms
-  if (truncation) {
-    truncation <- truncation
-    stopifnot(!is.null(trunc_freq_lim))
-    if (length(trunc_freq_lim) == 1) {
-      trunc_N <- trunc_freq * trunc_freq_lim
-      n <- trunc_N*2 ##? need to confirm
-    } else if (length(trunc_freq_lim) == 2) {
-      trunc_N_upper <- trunc_freq_lim[2] * trunc_freq
-      trunc_N_lower <- trunc_freq_lim[1] * trunc_freq
-      n <- (trunc_N_upper - trunc_N_lower) * 2
-      n_upper <- trunc_N_upper * 2
-    }
-  } else {
-    trunc_N_lower <- 0
-  }
+  # if (truncation) {
+  #   truncation <- truncation
+  #   stopifnot(!is.null(trunc_freq_lim))
+  #   if (length(trunc_freq_lim) == 1) {
+  #     trunc_N <- trunc_freq * trunc_freq_lim
+  #     n <- trunc_N*2 ##? need to confirm
+  #   } else if (length(trunc_freq_lim) == 2) {
+  #     trunc_N_upper <- trunc_freq_lim[2] * trunc_freq
+  #     trunc_N_lower <- trunc_freq_lim[1] * trunc_freq
+  #     n <- (trunc_N_upper - trunc_N_lower) * 2
+  #     n_upper <- trunc_N_upper * 2
+  #   }
+  # } else {
+  #   trunc_N_lower <- 0
+  # }
 
   # MCMC parameters
   stopifnot(!is.null(mcmc_params$Ntotal)); stopifnot(mcmc_params$Ntotal>0)
@@ -213,33 +225,41 @@ gibbs_m_avg_nuisance <- function(data,
     boundaryFrequecies <- 1
   }
   
-  if (truncation) {
-    if (length(trunc_freq_lim) == 1) {
-      omega <- omegaFreq(n)
-      N <- length(omega)
-      lambda <- pi * omega
-      pdgrm_scaling <- c(pi, rep(2*pi, n-1))
-      if (!(n%%2)) pdgrm_scaling[n] <- pi
-    } else {
-      omega <- omegaFreq(n_upper)[trunc_N_lower:trunc_N_upper]
-      N <- length(omega)
-      lambda <- pi * omega
-      pdgrm_scaling <- c(pi, rep(2*pi, n_upper-1))
-      if (!(n_upper%%2)) pdgrm_scaling[n_upper] <- pi
-    }  
-  } else {
-    omega <- omegaFreq(n)
-    N <- length(omega)
-    lambda <- pi * omega
-    pdgrm_scaling <- c(pi, rep(2*pi, n-1))
-    if (!(n%%2)) pdgrm_scaling[n] <- pi
-  }
+  # if (truncation) {
+  #   if (length(trunc_freq_lim) == 1) {
+  #     omega <- omegaFreq(n)
+  #     N <- length(omega)
+  #     lambda <- pi * omega
+  #     pdgrm_scaling <- c(pi, rep(2*pi, n-1))
+  #     if (!(n%%2)) pdgrm_scaling[n] <- pi
+  #   } else {
+  #     omega <- omegaFreq(n_upper)[trunc_N_lower:trunc_N_upper]
+  #     N <- length(omega)
+  #     lambda <- pi * omega
+  #     pdgrm_scaling <- c(pi, rep(2*pi, n_upper-1))
+  #     if (!(n_upper%%2)) pdgrm_scaling[n_upper] <- pi
+  #   }  
+  # } else {
+  #   omega <- omegaFreq(n)
+  #   N <- length(omega)
+  #   lambda <- pi * omega
+  #   pdgrm_scaling <- c(pi, rep(2*pi, n-1))
+  #   if (!(n%%2)) pdgrm_scaling[n] <- pi
+  # }
+  omega <- omegaFreq(n_upper)[trunc_N_lower:trunc_N_upper]
+  N <- length(omega)
+  lambda <- pi * omega # for the parametric part
 
   
-
-  # Pre-computed beta mixtures up to kmax as list
-  db.list <- dbList(n, kmax, normalized=normalizedBernsteins,
-                    bernstein_l, bernstein_r, coarsened)
+  
+  if (bspline) {
+    db.list <- NULL
+  } else {
+    dbs.list <- NULL
+    # Pre-computed beta mixtures up to kmax as list
+    db.list <- dbList(n, kmax, normalized=normalizedBernsteins,
+                      bernstein_l, bernstein_r, coarsened)
+  }
 
   # initielize storage: parameter of interest (if nuisance model)
   theta <- matrix(NA, nrow=theta_dim, ncol=Ntotal)
@@ -256,6 +276,16 @@ gibbs_m_avg_nuisance <- function(data,
   U__SCALING[U__IND_PIHALF] <- pi / 2
   r <- matrix(NA, nrow=L, ncol=Ntotal)
   Z <- matrix(NA, nrow=L, ncol=Ntotal)
+  ## Parameters for B-splines ##
+  if (bspline) {
+    V <- matrix(NA, nrow = L, ncol = Ntotal)
+    W <- matrix(NA, nrow = L + 1, ncol = Ntotal)  
+  } else {
+    V <- NULL
+    W <- NULL
+  }
+  
+  ##############################
   k__DIM <- d*d - ((d*d-1)*(1-prior.cholesky)) # d*d k's for prior.cholesky, 1 k for !prior.choelsky
   k <- array(NA, dim=c(k__DIM, Ntotal))
 
@@ -275,13 +305,11 @@ gibbs_m_avg_nuisance <- function(data,
   U_start <- cholesky_runif(L, d)
   U__phi[,,1] <- U_start$phi
   U[,,,1] <- U_start$U
-  # for (j in 1:L) {
-  #   # TODO: Can we improve this to draw uniformly U, as in Mittelbach ?
-  #   U__phi[U__IND_PIHALF,j,1] <- runif(length(U__IND_PIHALF), 0, 1) * pi / 2
-  #   U__phi[U__IND_PI,j,1] <- runif(length(U__IND_PI), 0, 1) * pi
-  #   U[,,j,1] <- cholesky_UFromPhi(U__phi[,j,1])
-  # }
-  f_start <- get_f_matrix(U[,,,1], r[,1], Z[,1], k[,1], db.list, prior.cholesky)
+  if (bspline) {
+    V[,1] <- vFromP(rep(1 / (L + 1), L))
+    W[,1] <- seq(from = 1 / (2*k[,1]), to = 1 - 1 / (2*k[,1]), length.out = L + 1)  
+  }
+  f_start <- get_f_matrix(omega, U[,,,1], r[,1], Z[,1], V[,1], W[,1], k[,1], db.list, prior.cholesky, bspline, degree_bs)
   # Make sure to start numerically stable
   if (numericalUnstable(f_start, excludeBoundary=F)) {
     cat("Re-drawing starting value due to numerical stability..")
@@ -293,7 +321,7 @@ gibbs_m_avg_nuisance <- function(data,
     cat(".")
     Z[,1] <- rbeta(L, 1, 1) # TODO Draw from omega_star ?
     r[,1] <- rexp(L, 1)
-    f_start <- get_f_matrix(U[,,,1], r[,1], Z[,1], k[,1], db.list, prior.cholesky)
+    f_start <- get_f_matrix(omega, U[,,,1], r[,1], Z[,1], V[,1], W[,1], k[,1], db.list, prior.cholesky, bspline, degree_bs)
   }
   if (unstable_start) cat("DONE!\n")
   if (corrected) {
@@ -358,6 +386,10 @@ gibbs_m_avg_nuisance <- function(data,
   lsd_r <- log(eps_r) / 2
   lsd_Z <- log(eps_Z) / 2
   lsd_U <- log(eps_U) / 2
+  eps_V <- seq(1, L) / (seq(1, L) + 2 * sqrt(n))
+  eps_W <- seq(1, L+1) / (seq(1, L+1) + 2 * sqrt(n))
+  lsd_V <- log(eps_V) / 2
+  lsd_W <- log(eps_W) / 2
 
   # proposal variances: parametric part
   #if (corrected && toggle) {
@@ -379,32 +411,34 @@ gibbs_m_avg_nuisance <- function(data,
     }
 
     ## Storage segmented data
-    if (seg_n == 1) {
-      noise <- array(rep(NA, n_init*d*1), dim = c(n_init, d, 1))
-      noise[,,1] <- get_noise(data_new[,,1], theta[,i])
-      if (length(trunc_freq_lim) == 1) {
-        FZ <- array(rep(NA, N*d*1), dim = c(N, d, 1))
-        FZ[,,1] <- mdft(noise[,,1])[1:N,]  
-      } else {
-        FZ <- array(rep(NA, (N-trunc_N_lower)*d*1), dim = c(N-trunc_N_lower, d, 1))
-        FZ[,,1] <- mdft(noise[,,1])[(trunc_N_lower+1):N,]
-      }
-    } else {
-      noise <- array(rep(NA, n_init*d*seg_n), dim = c(n_init, d, seg_n))
-      if (length(trunc_freq_lim) == 1) {
-        FZ <- array(rep(NA, N*d*seg_n), dim = c(N, d, seg_n))
-        for (ii in 1:seg_n) {
-          noise[,,ii] <- get_noise(data_new[,,ii], theta[,i])
-          FZ[,,ii] <- mdft(noise[,,ii])[1:N,]
-        }
-      } else {
-        FZ <- array(rep(NA, N*d*seg_n), dim = c(N, d, seg_n))
-        for (ii in 1:seg_n) {
-          noise[,,ii] <- get_noise(data_new[,,ii], theta[,i])
-          FZ[,,ii] <- mdft(noise[,,ii])[trunc_N_lower:trunc_N_upper,]
-        }
-      }
-    }
+    # if (seg_n == 1) {
+    #   noise <- array(rep(NA, n_init*d*1), dim = c(n_init, d, 1))
+    #   noise[,,1] <- get_noise(data_new[,,1], theta[,i])
+    #   if (length(trunc_freq_lim) == 1) {
+    #     FZ <- array(rep(NA, N*d*1), dim = c(N, d, 1))
+    #     FZ[,,1] <- mdft(noise[,,1])[1:N,]  
+    #   } else {
+    #     FZ <- array(rep(NA, (N-trunc_N_lower)*d*1), dim = c(N-trunc_N_lower, d, 1))
+    #     FZ[,,1] <- mdft(noise[,,1])[(trunc_N_lower+1):N,]
+    #   }
+    # } else {
+    #   noise <- array(rep(NA, n_init*d*seg_n), dim = c(n_init, d, seg_n))
+    #   if (length(trunc_freq_lim) == 1) {
+    #     FZ <- array(rep(NA, N*d*seg_n), dim = c(N, d, seg_n))
+    #     for (ii in 1:seg_n) {
+    #       noise[,,ii] <- get_noise(data_new[,,ii], theta[,i])
+    #       FZ[,,ii] <- mdft(noise[,,ii])[1:N,]
+    #     }
+    #   } else {
+    #     FZ <- array(rep(NA, N*d*seg_n), dim = c(N, d, seg_n))
+    #     for (ii in 1:seg_n) {
+    #       noise[,,ii] <- get_noise(data_new[,,ii], theta[,i])
+    #       FZ[,,ii] <- mdft(noise[,,ii])[trunc_N_lower:trunc_N_upper,]
+    #     }
+    #   }
+    # }
+    
+    FZ <- NULL
 
     if (i==1) {
       ##
@@ -414,7 +448,9 @@ gibbs_m_avg_nuisance <- function(data,
       t0 <- Sys.time()
       f.store <- lpost_matrixGamma(samp_freq=samp_freq,
                                    omega=omega,
-                                   FZ=FZ,
+                                   mpg_avg=mpg_avg,
+                                   Nb=Nb,
+                                   FZ=NULL,
                                    r=r[,i],
                                    U=U[,,,i],
                                    Z=Z[,i],
@@ -423,6 +459,13 @@ gibbs_m_avg_nuisance <- function(data,
                                    omega_fun=omega_fun,
                                    k.theta=k.theta,
                                    db.list=db.list,
+                                   bspline=bspline,
+                                   degree_bs=degree_bs,
+                                   V=V[,i],
+                                   W=W[,i],
+                                   H0.alpha=H0.alpha,
+                                   H0.beta=H0.beta,
+                                   MH=MH,
                                    eta=eta,
                                    Sigma_fun=Sigma_fun,
                                    corrected=corrected,
@@ -442,6 +485,12 @@ gibbs_m_avg_nuisance <- function(data,
                                            C_alpha=C_alpha,
                                            omega_fun=omega_fun,
                                            k.theta=k.theta,
+                                           bspline=bspline,
+                                           V_DP=V[,1],
+                                           W_DP=W[,1],
+                                           H0.alpha=H0.alpha,
+                                           H0.beta=H0.beta,
+                                           MH=MH,
                                            eta=eta,
                                            Sigma_fun=Sigma_fun,
                                            phi=phi.fit,
@@ -481,6 +530,14 @@ gibbs_m_avg_nuisance <- function(data,
       batch.U.acceptanceRate <- apply(batch.U, 1, acceptanceRate)
       lsd_U <- lsd_U + ((batch.U.acceptanceRate > adaption.targetAcceptanceRate)*2-1) * adaption.delta
       eps_U <- exp(2*lsd_U)
+      #batch.V <- V[,batch]
+      #batch.V.acceptanceRate <- apply(batch.V, 1, acceptanceRate)
+      #lsd_V <- lsd_V + ((batch.V.acceptanceRate > adaption.targetAcceptanceRate)*2-1) * adaption.delta
+      #eps_V <- exp(2*lsd_V)
+      #batch.W <- W[,batch]
+      #batch.W.acceptanceRate <- apply(batch.W, 1, acceptanceRate)
+      #lsd_W <- lsd_W + ((batch.W.acceptanceRate > adaption.targetAcceptanceRate)*2-1) * adaption.delta
+      #eps_W <- exp(2*lsd_W)
       ### parametric part (first component of phi matrices suffices)
       if (corrected && toggle) {
         batch.param <- param__phi[1,(1:var.order)*(d-1)+1,batch,drop=F]
@@ -497,13 +554,26 @@ gibbs_m_avg_nuisance <- function(data,
     k.old <- k[, i]
     for (j in 1:k__DIM) {
       k.star <- k.old
-      k.star[j] <- round(rt(1, 1)) + k.old[j]  # Cauchy distribution discretized
-      while (k.star[j] < 3 || k.star[j] > kmax) {  # A bit hacky
-        k.star[j] <- round(rt(1, 1)) + k.old[j]
+      bold <- runif(1, 0, 1)
+      if (bold < .75) {
+        jump <- sample(-1:1, 1, prob = rep(1/3, 3))
+      } else {
+        jump <- round(rt(1, 1))
+      }
+      k.star[j] <- jump + k.old[j]  # Cauchy distribution discretized
+      while (k.star[j] < (degree_bs+2) || k.star[j] > kmax) {  # A bit hacky
+        if (bold < .75) {
+          jump <- sample(-1:1, 1, prob = rep(1/3, 3))
+        } else {
+          jump <- round(rt(1, 1))
+        }
+        k.star[j] <- jump + k.old[j]
       }
       f.k.star <- lpost_matrixGamma(samp_freq=samp_freq,
                                     omega=omega,
-                                    FZ=FZ,
+                                    mpg_avg=mpg_avg,
+                                    Nb=Nb,
+                                    FZ=NULL,
                                     r=r[,i],
                                     U=U[,,,i],
                                     Z=Z[,i],
@@ -512,6 +582,13 @@ gibbs_m_avg_nuisance <- function(data,
                                     omega_fun=omega_fun,
                                     k.theta=k.theta,
                                     db.list=db.list,
+                                    bspline=bspline,
+                                    degree_bs=degree_bs,
+                                    V=V[,i],
+                                    W=W[,i],
+                                    H0.alpha=H0.alpha,
+                                    H0.beta=H0.beta,
+                                    MH=MH,
                                     eta=eta,
                                     Sigma_fun=Sigma_fun,
                                     corrected=corrected,
@@ -546,7 +623,9 @@ gibbs_m_avg_nuisance <- function(data,
       Z.star[l][Z.star[l] > 1] <- Z.star[l] - 1 # shift in [0,1]
       f.Z.star <- lpost_matrixGamma(samp_freq=samp_freq,
                                     omega=omega,
-                                    FZ=FZ,
+                                    mpg_avg=mpg_avg,
+                                    Nb=Nb,
+                                    FZ=NULL,
                                     r=r[,i],
                                     U=U[,,,i],
                                     Z=Z.star,
@@ -555,6 +634,13 @@ gibbs_m_avg_nuisance <- function(data,
                                     omega_fun=omega_fun,
                                     k.theta=k.theta,
                                     db.list=db.list,
+                                    bspline=bspline,
+                                    degree_bs=degree_bs,
+                                    V=V[,i],
+                                    W=W[,i],
+                                    H0.alpha=H0.alpha,
+                                    H0.beta=H0.beta,
+                                    MH=MH,
                                     eta=eta,
                                     Sigma_fun=Sigma_fun,
                                     corrected=corrected,
@@ -591,7 +677,9 @@ gibbs_m_avg_nuisance <- function(data,
       } else {
         f.r.star <- lpost_matrixGamma(samp_freq=samp_freq,
                                       omega=omega,
-                                      FZ=FZ,
+                                      mpg_avg=mpg_avg,
+                                      Nb=Nb,
+                                      FZ=NULL,
                                       r=r.star,
                                       U=U[,,,i],
                                       Z=Z[,i+1],
@@ -600,6 +688,13 @@ gibbs_m_avg_nuisance <- function(data,
                                       omega_fun=omega_fun,
                                       k.theta=k.theta,
                                       db.list=db.list,
+                                      bspline=bspline,
+                                      degree_bs=degree_bs,
+                                      V=V[,i],
+                                      W=W[,i],
+                                      H0.alpha=H0.alpha,
+                                      H0.beta=H0.beta,
+                                      MH=MH,
                                       eta=eta,
                                       Sigma_fun=Sigma_fun,
                                       corrected=corrected,
@@ -658,7 +753,9 @@ gibbs_m_avg_nuisance <- function(data,
       if (!rejectedU) {
         f.U.star <- lpost_matrixGamma(samp_freq=samp_freq,
                                       omega=omega,
-                                      FZ=FZ,
+                                      mpg_avg=mpg_avg,
+                                      Nb=Nb,
+                                      FZ=NULL,
                                       r=r[,i+1],
                                       U=U.star,
                                       Z=Z[,i+1],
@@ -667,6 +764,13 @@ gibbs_m_avg_nuisance <- function(data,
                                       omega_fun=omega_fun,
                                       k.theta=k.theta,
                                       db.list=db.list,
+                                      bspline=bspline,
+                                      degree_bs=degree_bs,
+                                      V=V[,i],
+                                      W=W[,i],
+                                      H0.alpha=H0.alpha,
+                                      H0.beta=H0.beta,
+                                      MH=MH,
                                       eta=eta,
                                       Sigma_fun=Sigma_fun,
                                       corrected=corrected,
@@ -695,11 +799,133 @@ gibbs_m_avg_nuisance <- function(data,
         }
       }
     }
-
+    
     ##
-    ## Step 5: Sample parametric part from full conjugate conditional
+    ## The next two steps are to sample parameters for B-splines
     ##
-    #print("Step 5")
+    if (bspline) {
+      #####
+      # Step 5: Metropolis-within-Gibbs sampler for V's (EXPENSIVE)
+      #####
+      V.old <- V[,i]
+      V.star <- V.old
+      for (l in 1:L) {
+        if (l > 1) {
+          for (il in 1:(l-1)) {
+            V.star[il] <- V.old[il] <- V[il,i+1]
+          }
+        }
+        
+        # Uniform proposal (V[,i] - eps, V[,i] + eps) on (0, 1)
+        V.star[l] <- runif(1, V.star[l] - eps_V[l], V.star[l] + eps_V[l])
+        V.star[l][V.star[l] > 1] <- V.star[l] - 1 # Puts in [0, 1]
+        V.star[l][V.star[l] < 0] <- V.star[l] + 1 # Puts in [0, 1]
+        
+        f.V.star <- lpost_matrixGamma(samp_freq=samp_freq,
+                                      omega=omega,
+                                      mpg_avg=mpg_avg,
+                                      Nb=Nb,
+                                      FZ=NULL,
+                                      r=r.star,
+                                      U=U[,,,i+1],
+                                      Z=Z[,i+1],
+                                      k=k[,i+1],
+                                      C_alpha=C_alpha,
+                                      omega_fun=omega_fun,
+                                      k.theta=k.theta,
+                                      db.list=db.list,
+                                      bspline=bspline,
+                                      degree_bs=degree_bs,
+                                      V=V.star,
+                                      W=W[,i],
+                                      H0.alpha=H0.alpha,
+                                      H0.beta=H0.beta,
+                                      MH=MH,
+                                      eta=eta,
+                                      Sigma_fun=Sigma_fun,
+                                      corrected=corrected,
+                                      f_param_avg_half=f_param_avg_half,
+                                      phi=phi.fit,
+                                      sigma_ar=sigma.fit,
+                                      prior.q=prior.q,
+                                      prior.cholesky=prior.cholesky,
+                                      excludeBoundary=T, # note
+                                      verbose=verbose)
+        
+        f.V <- f.store
+        # Accept/reject
+        alpha5 <- min(0, f.V.star - f.V)
+        if (log(runif(1, 0, 1)) < alpha5) {
+          V[l,i+1] <- V.star[l]
+          f.store <- f.V.star
+        } else {
+          V[l,i+1] <- V[l,i]
+        }
+      }
+      
+      #####
+      # Step 6: Metropolis-within-Gibbs sampler for W's
+      #####
+      W.old <- W[,i]
+      W.star <- W.old
+      for (l in 1:(L+1)) {
+        if (l > 1) {
+          for (il in 1:(l-1)) {
+            W.star[il] <- W.old[il] <- W[il,i+1]
+          }
+        }
+        
+        # Uniform proposal from (W[,i] - eps, W[,i] + eps) on (0, 1)
+        W.star[l] <- runif(1, W.star[l] - eps_W[l], W.star[l] + eps_W[l])
+        W.star[l][W.star[l] > 1] <- W.star[l] - 1 # Puts in [0, 1]
+        W.star[l][W.star[l] < 0] <- W.star[l] + 1 # Puts in [0, 1]
+        
+        f.W.star <- lpost_matrixGamma(samp_freq=samp_freq,
+                                      omega=omega,
+                                      mpg_avg=mpg_avg,
+                                      Nb=Nb,
+                                      FZ=NULL,
+                                      r=r.star,
+                                      U=U[,,,i+1],
+                                      Z=Z[,i+1],
+                                      k=k[,i+1],
+                                      C_alpha=C_alpha,
+                                      omega_fun=omega_fun,
+                                      k.theta=k.theta,
+                                      db.list=db.list,
+                                      bspline=bspline,
+                                      degree_bs=degree_bs,
+                                      V=V[,i+1],
+                                      W=W.star,
+                                      H0.alpha=H0.alpha,
+                                      H0.beta=H0.beta,
+                                      MH=MH,
+                                      eta=eta,
+                                      Sigma_fun=Sigma_fun,
+                                      corrected=corrected,
+                                      f_param_avg_half=f_param_avg_half,
+                                      phi=phi.fit,
+                                      sigma_ar=sigma.fit,
+                                      prior.q=prior.q,
+                                      prior.cholesky=prior.cholesky,
+                                      excludeBoundary=T, # note
+                                      verbose=verbose)
+        
+        f.W <- f.store
+        # Accept/reject
+        alpha6 <- min(0, f.W.star - f.W)
+        if (log(runif(1, 0, 1)) < alpha6) {
+          W[l,i+1] <- W.star[l]
+          f.store <- f.W.star
+        } else {
+          W[l,i+1] <- W[l,i]
+        }
+      }
+    }
+    ##
+    ## Step 7: Sample parametric part from full conjugate conditional
+    ##
+    #print("Step 7")
     if (corrected && toggle) {
       # TODO This proposal needs improval
       param__beta.old <- param__beta[,i]
@@ -737,7 +963,9 @@ gibbs_m_avg_nuisance <- function(data,
                                sqrt_d=sqrt_d)  ##
           f.phi.star <- lpost_matrixGamma(samp_freq=samp_freq,
                                           omega=omega,
-                                          FZ=FZ,
+                                          mpg_avg=mpg_avg,
+                                          Nb=Nb,
+                                          FZ=NULL,
                                           r=r[,i+1],
                                           U=U[,,,i+1],
                                           Z=Z[,i+1],
@@ -746,6 +974,13 @@ gibbs_m_avg_nuisance <- function(data,
                                           omega_fun=omega_fun,
                                           k.theta=k.theta,
                                           db.list=db.list,
+                                          bspline=bspline,
+                                          degree_bs=degree_bs,
+                                          V=V[,i+1],
+                                          W=W[,i+1],
+                                          H0.alpha=H0.alpha,
+                                          H0.beta=H0.beta,
+                                          MH=MH,
                                           eta=eta,
                                           Sigma_fun=Sigma_fun,
                                           corrected=corrected,
@@ -756,8 +991,8 @@ gibbs_m_avg_nuisance <- function(data,
                                           excludeBoundary=T, # note
                                           verbose=verbose)
           f.phi <- f.store
-          alpha5 <- min(0, f.phi.star - f.phi) # Note: Normal proposal symmetric for beta
-          if (log(runif(1,0,1)) < alpha5) {
+          alpha7 <- min(0, f.phi.star - f.phi) # Note: Normal proposal symmetric for beta
+          if (log(runif(1,0,1)) < alpha7) {
             # accept
             param__beta[,i+1] <- param__beta.star
             param__beta.old <- param__beta.star
@@ -781,11 +1016,11 @@ gibbs_m_avg_nuisance <- function(data,
     # MH Step for theta
     if (theta_dim > 0) {
       if (corrected) {
-        q_for_theta <- get_f_matrix(U[,,,i+1], r[,i+1], Z[,i+1], k[,i+1], db.list, prior.cholesky)
+        q_for_theta <- get_f_matrix(omega, U[,,,i+1], r[,i+1], Z[,i+1], V[,i+1], W[,i+1], k[,i+1], db.list, prior.cholesky, bspline, degree_bs)
         f_for_theta <- mult_cube(mult_cube(phi.fit$f_param_half, q_for_theta), phi.fit$f_param_half_trans)
         previous_theta <- theta[,i] # might change for corrected in case of double steps
       } else {
-        f_for_theta <- get_f_matrix(U[,,,i+1], r[,i+1], Z[,i+1], k[,i+1], db.list, prior.cholesky)
+        f_for_theta <- get_f_matrix(omega, U[,,,i+1], r[,i+1], Z[,i+1], V[,i+1], W[,i+1], k[,i+1], db.list, prior.cholesky, bspline, degree_bs)
         previous_theta <- theta[,i] # might change for corrected in case of double steps
       }
       theta_prop <- propose_next_theta(data=data, f=f_for_theta, previous_theta=previous_theta, NULL)
@@ -796,7 +1031,9 @@ gibbs_m_avg_nuisance <- function(data,
       ##
       f.theta.star <- lpost_matrixGamma(samp_freq=samp_freq,
                                         omega=omega,
-                                        FZ=FZ_star, # note
+                                        mpg_avg=mpg_avg,
+                                        Nb=Nb,
+                                        FZ=NULL, # note
                                         r=r[,i+1],
                                         U=U[,,,i+1],
                                         Z=Z[,i+1],
@@ -805,6 +1042,13 @@ gibbs_m_avg_nuisance <- function(data,
                                         omega_fun=omega_fun,
                                         k.theta=k.theta,
                                         db.list=db.list,
+                                        bspline=bspline,
+                                        degree_bs=degree_bs,
+                                        V=V[,i+1],
+                                        W=W[,i+1],
+                                        H0.alpha=H0.alpha,
+                                        H0.beta=H0.beta,
+                                        MH=MH,
                                         eta=eta,
                                         Sigma_fun=Sigma_fun,
                                         corrected=corrected,
@@ -817,7 +1061,9 @@ gibbs_m_avg_nuisance <- function(data,
                                         verbose=verbose)
       f.theta <- lpost_matrixGamma(samp_freq=samp_freq,
                                    omega=omega,
-                                   FZ=FZ, # note
+                                   mpg_avg=mpg_avg,
+                                   Nb=Nb,
+                                   FZ=NULL, # note
                                    r=r[,i+1],
                                    U=U[,,,i+1],
                                    Z=Z[,i+1],
@@ -826,6 +1072,13 @@ gibbs_m_avg_nuisance <- function(data,
                                    omega_fun=omega_fun,
                                    k.theta=k.theta,
                                    db.list=db.list,
+                                   bspline=bspline,
+                                   degree_bs=degree_bs,
+                                   V=V[,i+1],
+                                   W=W[,i+1],
+                                   H0.alpha=H0.alpha,
+                                   H0.beta=H0.beta,
+                                   MH=MH,
                                    eta=eta,
                                    Sigma_fun=Sigma_fun,
                                    corrected=corrected,
@@ -846,7 +1099,9 @@ gibbs_m_avg_nuisance <- function(data,
         theta[,i+1] <- theta_star
         f.store <- lpost_matrixGamma(samp_freq=samp_freq,
                                      omega=omega,
-                                     FZ=FZ_star, # note
+                                     mpg_avg=mpg_avg,
+                                     Nb=Nb,
+                                     FZ=NULL, # note
                                      r=r[,i+1],
                                      U=U[,,,i+1],
                                      Z=Z[,i+1],
@@ -855,6 +1110,13 @@ gibbs_m_avg_nuisance <- function(data,
                                      omega_fun=omega_fun,
                                      k.theta=k.theta,
                                      db.list=db.list,
+                                     bspline=bspline,
+                                     degree_bs=degree_bs,
+                                     V=V[,i+1],
+                                     W=W[,i+1],
+                                     H0.alpha=H0.alpha,
+                                     H0.beta=H0.beta,
+                                     MH=MH,
                                      eta=eta,
                                      Sigma_fun=Sigma_fun,
                                      corrected=corrected,
@@ -883,6 +1145,12 @@ gibbs_m_avg_nuisance <- function(data,
                                            C_alpha=C_alpha,
                                            omega_fun=omega_fun,
                                            k.theta=k.theta,
+                                           bspline=bspline,
+                                           V_DP=V[,i+1],
+                                           W_DP=W[,i+1],
+                                           H0.alpha=H0.alpha,
+                                           H0.beta=H0.beta,
+                                           MH=MH,
                                            eta=eta,
                                            Sigma_fun=Sigma_fun,
                                            phi=phi.fit,
@@ -919,7 +1187,7 @@ gibbs_m_avg_nuisance <- function(data,
   }
   theta <- theta[,keep,drop=F]
 
-  W <- array(dim=c(d,d,L,length(keep))) # for convenience
+  #W <- array(dim=c(d,d,L,length(keep))) # for convenience
   if (truncation) {
     if (length(trunc_freq_lim) == 1) {
       fpsd.sample <- array(NA, dim=c(d, d, N, length(keep)))
@@ -971,11 +1239,11 @@ gibbs_m_avg_nuisance <- function(data,
   #  }
     if (corrected) {
       # Pseudo corrected likelihood
-      q_sample <- get_f_matrix(U[,,,isample], r[,isample], Z[,isample], k[,isample], db.list, prior.cholesky)
+      q_sample <- get_f_matrix(omega, U[,,,isample], r[,isample], Z[,isample], V[,isample], W[,isample], k[,isample], db.list, prior.cholesky, bspline, degree_bs)
       #f_sample <- q_sample
       f_sample <- mult_cube(mult_cube(f_param_avg_half, q_sample), f_param_avg_half_trans) # "prior on q=f/f_param"
     } else {
-      f_sample <- get_f_matrix(U[,,,isample], r[,isample], Z[,isample], k[,isample], db.list, prior.cholesky)
+      f_sample <- get_f_matrix(omega, U[,,,isample], r[,isample], Z[,isample], V[,isample], W[,isample], k[,isample], db.list, prior.cholesky, bspline, degree_bs)
     }
     fpsd.sample[,,,isample] <- realValuedPsd(f_sample)
     for (ipair in 1:comb_t_n){
@@ -1044,6 +1312,14 @@ gibbs_m_avg_nuisance <- function(data,
   ##
   ## Return stuff
   ##
+  ### Replicate the result of the last second frequency for the last frequency
+  ### Bad implementation -- temporarily before finding the solution to avoid
+  ###                       the psd of the last frequency becoming extremely small -- Yixuan
+  fpsd.s[,,N] <- fpsd.s[,,N-1]
+  fpsd.mean[,,N] <- fpsd.mean[,,N-1]
+  fpsd.s05[,,N] <- fpsd.s05[,,N-1]
+  fpsd.uuci05[,,N] <- fpsd.uci05[,,N-1]
+  fpsd.uuci95[,,N] <- fpsd.uuci95[,,N-1]
   return(list(data=data,
               k=k,
               r=r,
