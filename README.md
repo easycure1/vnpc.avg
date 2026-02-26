@@ -57,3 +57,6 @@ devtools::install()
 Shape: (4096000 by 3) 
 [Link](https://drive.google.com/file/d/1Tfm-4PI-LdUzzjj7iz5bK_JmYXStJnKq/view?usp=sharing)
 
+# Simulated noise data & results
+[Link](https://drive.google.com/drive/folders/1rBsnJRAgfCl9cIzPanDYfX7YDZQ2ULI8?usp=sharing)
+
