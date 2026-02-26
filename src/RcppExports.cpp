@@ -194,17 +194,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// llike_corrected_whittle_sum
-double llike_corrected_whittle_sum(const arma::cx_cube& FZ, const arma::cx_cube& f, const arma::cx_cube& f_param_avg_half, int freq);
-RcppExport SEXP _vnpc_avg_llike_corrected_whittle_sum(SEXP FZSEXP, SEXP fSEXP, SEXP f_param_avg_halfSEXP, SEXP freqSEXP) {
+// llike_corrected_avg
+double llike_corrected_avg(const arma::cx_cube& mpg_avg, const arma::cx_cube& f, const arma::cx_cube& f_param_avg_half, int Nb);
+RcppExport SEXP _vnpc_avg_llike_corrected_avg(SEXP mpg_avgSEXP, SEXP fSEXP, SEXP f_param_avg_halfSEXP, SEXP NbSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::cx_cube& >::type FZ(FZSEXP);
+    Rcpp::traits::input_parameter< const arma::cx_cube& >::type mpg_avg(mpg_avgSEXP);
     Rcpp::traits::input_parameter< const arma::cx_cube& >::type f(fSEXP);
     Rcpp::traits::input_parameter< const arma::cx_cube& >::type f_param_avg_half(f_param_avg_halfSEXP);
-    Rcpp::traits::input_parameter< int >::type freq(freqSEXP);
-    rcpp_result_gen = Rcpp::wrap(llike_corrected_whittle_sum(FZ, f, f_param_avg_half, freq));
+    Rcpp::traits::input_parameter< int >::type Nb(NbSEXP);
+    rcpp_result_gen = Rcpp::wrap(llike_corrected_avg(mpg_avg, f, f_param_avg_half, Nb));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -579,7 +579,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_vnpc_avg_llike_whittle", (DL_FUNC) &_vnpc_avg_llike_whittle, 2},
     {"_vnpc_avg_llike_whittle_sum", (DL_FUNC) &_vnpc_avg_llike_whittle_sum, 3},
     {"_vnpc_avg_llike_whittle_avg", (DL_FUNC) &_vnpc_avg_llike_whittle_avg, 3},
-    {"_vnpc_avg_llike_corrected_whittle_sum", (DL_FUNC) &_vnpc_avg_llike_corrected_whittle_sum, 4},
+    {"_vnpc_avg_llike_corrected_avg", (DL_FUNC) &_vnpc_avg_llike_corrected_avg, 4},
     {"_vnpc_avg_epsilon_var", (DL_FUNC) &_vnpc_avg_epsilon_var, 2},
     {"_vnpc_avg_epsilon_var_n", (DL_FUNC) &_vnpc_avg_epsilon_var_n, 2},
     {"_vnpc_avg_sldmvnorm", (DL_FUNC) &_vnpc_avg_sldmvnorm, 2},

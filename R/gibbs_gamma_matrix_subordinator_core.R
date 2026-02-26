@@ -35,6 +35,7 @@ llike_matrixGamma <- function(samp_freq,
                               mpg_avg,
                               Nb,
                               FZ,
+                              data,
                               r,
                               U,
                               Z,
@@ -45,6 +46,7 @@ llike_matrixGamma <- function(samp_freq,
                               V,
                               W,
                               corrected,
+                              toggle,
                               f_param_avg_half,
                               phi,
                               sigma_ar,
@@ -78,10 +80,20 @@ llike_matrixGamma <- function(samp_freq,
     #                            excludeBoundary=excludeBoundary)
     #}
     # Pseudo corrected likelihood
-    ll <- llike_corrected_whittle_sum(FZ=FZ,
-                                      f=f,
-                                      f_param_avg_half=f_param_avg_half,
-                                      freq=samp_freq)
+    if (toggle) {
+      ll <- llike_corrected_avg(mpg_avg=mpg_avg,
+                                f=f,
+                                f_param_avg_half=phi$f_param_avg_half,
+                                Nb=Nb)
+      ll <- ll + llike_var_partial(zt=data,
+                                   ar=phi$ar,
+                                   sigma_ar)
+    } else {
+      ll <- llike_corrected_avg(mpg_avg=mpg_avg,
+                                f=f,
+                                f_param_avg_half=f_param_avg_half,
+                                Nb=Nb)
+    }
   } else {
     # Sum of Whittle's likelihood of all segments
     # ll <- llike_whittle_sum(FZ=FZ,
@@ -224,6 +236,7 @@ lpost_matrixGamma <- function(samp_freq,
                               mpg_avg,
                               Nb,
                               FZ,
+                              data,
                               r,
                               U,
                               Z,
@@ -243,6 +256,7 @@ lpost_matrixGamma <- function(samp_freq,
                               eta,
                               Sigma_fun, # prior parameter for AGamma process
                               corrected,
+                              toggle,
                               f_param_avg_half,
                               phi,
                               sigma_ar, # corresponding to AR fit
@@ -255,6 +269,7 @@ lpost_matrixGamma <- function(samp_freq,
                           mpg_avg=mpg_avg,
                           Nb=Nb,
                           FZ=FZ,
+                          data=data,
                           r=r,
                           U=U,
                           Z=Z,
@@ -265,6 +280,7 @@ lpost_matrixGamma <- function(samp_freq,
                           V=V,
                           W=W,
                           corrected=corrected,
+                          toggle=toggle,
                           f_param_avg_half=f_param_avg_half,
                           phi=phi,
                           sigma_ar=sigma_ar,

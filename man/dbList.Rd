@@ -19,11 +19,11 @@ dbList(
 
 \item{kmax}{positive integer for the largest degree}
 
+\item{normalized}{whether being normalized}
+
 \item{bernstein_l, bernstein_r}{left and right truncation}
 
 \item{coarsened}{bool flag indicating whether coarsened or standard Bernstein polynomials are used}
-
-\item{verbose}{debugging parameter}
 }
 \value{
 A list of length kmax, where the k-th list element is a matrix containing the polynomial basis of degree k

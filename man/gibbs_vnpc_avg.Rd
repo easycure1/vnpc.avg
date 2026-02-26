@@ -16,6 +16,8 @@ gibbs_vnpc_avg(
   bspline = FALSE,
   degree_bs = 3,
   corrected = FALSE,
+  toggle = FALSE,
+  f_param_avg = NULL,
   var.order = NULL,
   Ntotal,
   burnin,
@@ -45,6 +47,10 @@ gibbs_vnpc_avg(
 \arguments{
 \item{data}{numerical matrix}
 
+\item{mpg_avg}{average periodogram}
+
+\item{Nb}{number of blocks}
+
 \item{samp_freq}{sampling frequency (default = 2*pi)}
 
 \item{trunc_freq}{sampling frequency for truncated data (default = 2*pi)}
@@ -55,7 +61,15 @@ gibbs_vnpc_avg(
 
 \item{trunc_freq_lim}{frequency bounds of the truncated data, an positive integer or a 2-dimensional vector with lower and upper bounds being integers, used for truncation = TRUE only.}
 
+\item{bspline}{flag indicating whether using the B-spline}
+
+\item{degree_bs}{the degree of the basis function of B-spline}
+
 \item{corrected}{flag indicating whether the corrected likelihood is used (default = FALSE).}
+
+\item{toggle}{toggle}
+
+\item{f_param_avg}{the average psd of a pre-fitted VAR model}
 
 \item{var.order}{VAR order for the parametric working model}
 
@@ -88,6 +102,12 @@ gibbs_vnpc_avg(
 \item{trunc_l, trunc_r}{left and right truncation of Bernstein polynomial basis functions, 0<=trunc_l<trunc_r<=1}
 
 \item{coars}{flag indicating whether coarsened or default bernstein polynomials are used (see Appendix E.1 in Ghosal and van der Vaart 2017)}
+
+\item{H0.alpha}{...}
+
+\item{H0.beta}{...}
+
+\item{MH}{...}
 
 \item{L}{truncation parameter of Gamma process}
 

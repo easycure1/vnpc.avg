@@ -36,6 +36,7 @@ gibbs_m_avg_nuisance <- function(data,
                                  H0.beta=NULL,
                                  MH=NULL,
                                  corrected,
+                                 f_param_avg=NULL,
                                  prior_params,
                                  model_params) {
 
@@ -170,32 +171,30 @@ gibbs_m_avg_nuisance <- function(data,
   L <- prior_params$L
   if (corrected) {
     #stopifnot(!is.null(prior_params$toggle))
-    #toggle <- prior_params$toggle
+    toggle <- prior_params$toggle
     #stopifnot(!is.null(prior_params$prior.q))
-    #prior.q <- prior_params$prior.q
+    prior.q <- prior_params$prior.q
     stopifnot(!is.null(prior_params$var.order)); stopifnot(prior_params$var.order>0)
     var.order <- prior_params$var.order
     #stopifnot(!is.null(prior_params$sqrt_d))
-    #sqrt_d <- prior_params$sqrt_d
+    sqrt_d <- prior_params$sqrt_d
     # not implmeneted yet
     # stopifnot(!is.null(prior_params$alpha.toggle))
     # alpha.toggle <- prior_params$alpha.toggle
-    #if (toggle) {
-    #  phi.fit <- NULL
-    #  sigma.fit <- NULL
-    #  stopifnot(!is.null(prior_params$mu_beta)) # prior parameters for parametric part (Normal Inverse Wishart)
-    #  mu_beta <- prior_params$mu_beta
-    #  stopifnot(!is.null(prior_params$V_beta))  # prior parameters for parametric part (Normal Inverse Wishart)
-    #  V_beta <- prior_params$V_beta
-    #} else {
-    #  stopifnot(!is.null(prior_params$phi.fit) && !is.null(prior_params$sigma.fit))
-    #  phi.fit <- prior_params$phi.fit
-    #  sigma.fit <- prior_params$sigma.fit
-    #  mu_beta <- NULL
-    #  V_beta <- NULL
-    #}
-    toggle <- alpha.toggle <- prior.q <- FALSE ## for the fixed parametric setting
-    phi.fit <- sigma.fit <- NULL               ##
+    if (toggle) {
+     alpha.toggle <- prior.q <- FALSE
+     phi.fit <- NULL
+     sigma.fit <- NULL
+     stopifnot(!is.null(prior_params$mu_beta)) # prior parameters for parametric part (Normal Inverse Wishart)
+     mu_beta <- prior_params$mu_beta
+     stopifnot(!is.null(prior_params$V_beta))  # prior parameters for parametric part (Normal Inverse Wishart)
+     V_beta <- prior_params$V_beta
+    } else {
+     alpha.toggle <- prior.q <- FALSE ## for the fixed parametric setting
+     phi.fit <- sigma.fit <- NULL               ##
+     mu_beta <- NULL
+     V_beta <- NULL
+    }
   } else {
     toggle <- alpha.toggle <- prior.q <- FALSE
     phi.fit <- sigma.fit <- NULL
@@ -246,7 +245,11 @@ gibbs_m_avg_nuisance <- function(data,
   #   pdgrm_scaling <- c(pi, rep(2*pi, n-1))
   #   if (!(n%%2)) pdgrm_scaling[n] <- pi
   # }
-  omega <- omegaFreq(n_upper)[trunc_N_lower:trunc_N_upper]
+  if (trunc_N_lower == 0) {
+    omega <- omegaFreq(n_upper)[1:(trunc_N_upper+1)]
+  } else {
+    omega <- omegaFreq(n_upper)[trunc_N_lower:trunc_N_upper]  
+  }
   N <- length(omega)
   lambda <- pi * omega # for the parametric part
 
@@ -290,10 +293,10 @@ gibbs_m_avg_nuisance <- function(data,
   k <- array(NA, dim=c(k__DIM, Ntotal))
 
   # initialize storage: parametric VAR part
-  #if (corrected && toggle) {
-  #  param__beta <- array(NA, dim=c(d*d*var.order, Ntotal))
-  #  param__phi <- array(NA, dim=c(d,d*var.order,Ntotal)) # redundant, for convenience
-  #}
+  if (corrected && toggle) {
+   param__beta <- array(NA, dim=c(d*d*var.order, Ntotal))
+   param__phi <- array(NA, dim=c(d,d*var.order,Ntotal)) # redundant, for convenience
+  }
 
   # starting values
   nu_U <- rep(10, L)
@@ -326,58 +329,59 @@ gibbs_m_avg_nuisance <- function(data,
   if (unstable_start) cat("DONE!\n")
   if (corrected) {
     # Pseudo corrected likelihood
-    psd_param <- array(integer(d*d*N*seg_n), dim = c(d, d, N, seg_n))
-    for (seg_i in 1:seg_n) {
-      var_fit <- ar(data_new[,,seg_i], order.max = var.order, aic = F)
-      AR <- var_fit$ar
-      Sigma <- var_fit$var.pred
-      
-      beta_start <- NULL
-      for (jj in 1:d) {
-        beta_start <- c(beta_start, c(t(AR[,jj,])))
-      }
-      phi_param <- phiFromBeta_normalInverseWishart(beta_start, d, var.order)
-      
-      psd_param[,,,seg_i] <- psd_varma(lambda, ar=phi_param, Sigma=Sigma)$psd
-    }
+    # psd_param <- array(integer(d*d*N*seg_n), dim = c(d, d, N, seg_n))
+    # for (seg_i in 1:seg_n) {
+    #   var_fit <- ar(data_new[,,seg_i], order.max = var.order, aic = F)
+    #   AR <- var_fit$ar
+    #   Sigma <- var_fit$var.pred
+    #   
+    #   beta_start <- NULL
+    #   for (jj in 1:d) {
+    #     beta_start <- c(beta_start, c(t(AR[,jj,])))
+    #   }
+    #   phi_param <- phiFromBeta_normalInverseWishart(beta_start, d, var.order)
+    #   
+    #   psd_param[,,,seg_i] <- psd_varma(lambda, ar=phi_param, Sigma=Sigma)$psd
+    # }
+    # 
+    # f_param_avg <- apply(psd_param, c(1,2,3), function(x) sum(x)/seg_n)
     
-    f_param_avg <- apply(psd_param, c(1,2,3), function(x) sum(x)/seg_n)
+    if (toggle) {
+     a1 <- ar(data, order.max=var.order, aic=F)
+     beta_start <- NULL
+     for (jj in 1:d) {
+       beta_start <- c(beta_start, c(t(a1$ar[,jj,])))
+     }
+     param__beta[,1] <- beta_start
+     param__phi[,,1] <- phiFromBeta_normalInverseWishart(param__beta[,1], d, var.order)
+     sigma.fit <- a1$var.pred
+     V_beta_inv <- solve(V_beta)
+     suppressWarnings(if (sqrt_d) f_param_avg_half <- sqrt_cube(psd_varma(lambda, param__phi[,,1], Sigma=sigma.fit)$psd, excludeBoundary=F)
+     else f_param_avg_half <- chol_cube(psd_varma(lambda, param__phi[,,1], Sigma=sigma.fit)$psd, excludeBoundary=F), classes='warning')
+    #
+    # NOTE: a bit abuse of notation for phi:
+    # - Parse f_param_avg_half to likelihood to save redundant computations
+    # - Parse beta parametrization to the Normal-Inverse-Wishart prior
+    #
+     phi.fit <- list(ar=param__phi[,,1],
+                     f_param_avg_half=f_param_avg_half,
+                     f_param_avg_half_trans=trans_cube(f_param_avg_half),
+                     beta=param__beta[,1],  ##
+                     mu_beta=mu_beta,       ## include stuff for prior computation, iff toggle
+                     V_beta_inv=V_beta_inv,
+                     sqrt_d=sqrt_d) ##
+    } else {
+    #
+    # NOTE: a bit abuse of notation for phi:
+    # Parse f_param_avg_half to likelihood to save redundant computations
+    #
+     # suppressWarnings(if (sqrt_d) f_param_avg_half <- sqrt_cube(psd_varma(lambda, phi.fit, Sigma=sigma.fit)$psd, excludeBoundary=F)
+     # else f_param_avg_half <- chol_cube(psd_varma(lambda, phi.fit, Sigma=sigma.fit)$psd, excludeBoundary=F), classes='warning')
+     # phi.fit <- list(ar=phi.fit,
+     #                 f_param_avg_half=f_param_avg_half,
+     #                 f_param_avg_half_trans=trans_cube(f_param_avg_half))
     f_param_avg_half <- chol_cube(f_param_avg, excludeBoundary=F)
-    #if (toggle) {
-    #  a1 <- ar(data, order.max=var.order, aic=F)
-    #  beta_start <- NULL
-    #  for (jj in 1:d) {
-    #    beta_start <- c(beta_start, c(t(a1$ar[,jj,])))
-    #  }
-    #  param__beta[,1] <- beta_start
-    #  param__phi[,,1] <- phiFromBeta_normalInverseWishart(param__beta[,1], d, var.order)
-    #  sigma.fit <- a1$var.pred
-    #  V_beta_inv <- solve(V_beta)
-    #  suppressWarnings(if (sqrt_d) f_param_half <- sqrt_cube(psd_varma(lambda, param__phi[,,1], Sigma=sigma.fit)$psd, excludeBoundary=F)
-    #  else f_param_half <- chol_cube(psd_varma(lambda, param__phi[,,1], Sigma=sigma.fit)$psd, excludeBoundary=F), classes='warning')
-      ##
-      ## NOTE: a bit abuse of notation for phi:
-      ## - Parse f_param_half to likelihood to save redundant computations
-      ## - Parse beta parametrization to the Normal-Inverse-Wishart prior
-      ##
-    #  phi.fit <- list(ar=param__phi[,,1],
-    #                  f_param_half=f_param_half,
-    #                  f_param_half_trans=trans_cube(f_param_half),
-    #                  beta=param__beta[,1],  ##
-    #                  mu_beta=mu_beta,       ## include stuff for prior computation, iff toggle
-    #                  V_beta_inv=V_beta_inv,
-    #                  sqrt_d=sqrt_d) ##
-    #} else {
-      ##
-      ## NOTE: a bit abuse of notation for phi:
-      ## Parse f_param_half to likelihood to save redundant computations
-      ##
-    #  suppressWarnings(if (sqrt_d) f_param_half <- sqrt_cube(psd_varma(lambda, phi.fit, Sigma=sigma.fit)$psd, excludeBoundary=F)
-    #  else f_param_half <- chol_cube(psd_varma(lambda, phi.fit, Sigma=sigma.fit)$psd, excludeBoundary=F), classes='warning')
-    #  phi.fit <- list(ar=phi.fit,
-    #                  f_param_half=f_param_half,
-    #                  f_param_half_trans=trans_cube(f_param_half))
-    #}
+    }
   }
   theta[,1] <- initialize_theta(data)
 
@@ -392,10 +396,10 @@ gibbs_m_avg_nuisance <- function(data,
   lsd_W <- log(eps_W) / 2
 
   # proposal variances: parametric part
-  #if (corrected && toggle) {
-  #  eps_param <- rep(1/n/sqrt(n), var.order)
-  #  lsd_param <- log(eps_param) / 2
-  #}
+  if (corrected && toggle) {
+   eps_param <- rep(1/n/sqrt(n), var.order)
+   lsd_param <- log(eps_param) / 2
+  }
 
   cat("Starting MH sampler")
   ##
@@ -438,7 +442,10 @@ gibbs_m_avg_nuisance <- function(data,
     #   }
     # }
     
-    FZ <- NULL
+    # if (corrected && toggle) {
+    #   noise <- get_noise(data, theta[,i])
+    #   FZ <- mdft(noise)
+    # }
 
     if (i==1) {
       ##
@@ -451,6 +458,7 @@ gibbs_m_avg_nuisance <- function(data,
                                    mpg_avg=mpg_avg,
                                    Nb=Nb,
                                    FZ=NULL,
+                                   data=data,
                                    r=r[,i],
                                    U=U[,,,i],
                                    Z=Z[,i],
@@ -469,6 +477,7 @@ gibbs_m_avg_nuisance <- function(data,
                                    eta=eta,
                                    Sigma_fun=Sigma_fun,
                                    corrected=corrected,
+                                   toggle=toggle,
                                    f_param_avg_half=f_param_avg_half,
                                    phi=phi.fit,
                                    sigma_ar=sigma.fit,
@@ -560,6 +569,7 @@ gibbs_m_avg_nuisance <- function(data,
       } else {
         jump <- round(rt(1, 1))
       }
+      # jump <- sample(-1:1, 1, prob = rep(1/3, 3))
       k.star[j] <- jump + k.old[j]  # Cauchy distribution discretized
       while (k.star[j] < (degree_bs+2) || k.star[j] > kmax) {  # A bit hacky
         if (bold < .75) {
@@ -569,11 +579,16 @@ gibbs_m_avg_nuisance <- function(data,
         }
         k.star[j] <- jump + k.old[j]
       }
+      # while (k.star[j] < 3 || k.star[j] > kmax) {
+      #   jump <- sample(-1:1, 1, prob = rep(1/3, 3))
+      #   k.star[j] <- jump + k.old[j]
+      # }
       f.k.star <- lpost_matrixGamma(samp_freq=samp_freq,
                                     omega=omega,
                                     mpg_avg=mpg_avg,
                                     Nb=Nb,
                                     FZ=NULL,
+                                    data=data,
                                     r=r[,i],
                                     U=U[,,,i],
                                     Z=Z[,i],
@@ -592,6 +607,7 @@ gibbs_m_avg_nuisance <- function(data,
                                     eta=eta,
                                     Sigma_fun=Sigma_fun,
                                     corrected=corrected,
+                                    toggle=toggle,
                                     f_param_avg_half=f_param_avg_half,
                                     phi=phi.fit,
                                     sigma_ar=sigma.fit,
@@ -626,6 +642,7 @@ gibbs_m_avg_nuisance <- function(data,
                                     mpg_avg=mpg_avg,
                                     Nb=Nb,
                                     FZ=NULL,
+                                    data=data,
                                     r=r[,i],
                                     U=U[,,,i],
                                     Z=Z.star,
@@ -644,6 +661,7 @@ gibbs_m_avg_nuisance <- function(data,
                                     eta=eta,
                                     Sigma_fun=Sigma_fun,
                                     corrected=corrected,
+                                    toggle=toggle,
                                     f_param_avg_half=f_param_avg_half,
                                     phi=phi.fit,
                                     sigma_ar=sigma.fit,
@@ -680,6 +698,7 @@ gibbs_m_avg_nuisance <- function(data,
                                       mpg_avg=mpg_avg,
                                       Nb=Nb,
                                       FZ=NULL,
+                                      data=data,
                                       r=r.star,
                                       U=U[,,,i],
                                       Z=Z[,i+1],
@@ -698,6 +717,7 @@ gibbs_m_avg_nuisance <- function(data,
                                       eta=eta,
                                       Sigma_fun=Sigma_fun,
                                       corrected=corrected,
+                                      toggle=toggle,
                                       f_param_avg_half=f_param_avg_half,
                                       phi=phi.fit,
                                       sigma_ar=sigma.fit,
@@ -756,6 +776,7 @@ gibbs_m_avg_nuisance <- function(data,
                                       mpg_avg=mpg_avg,
                                       Nb=Nb,
                                       FZ=NULL,
+                                      data=data,
                                       r=r[,i+1],
                                       U=U.star,
                                       Z=Z[,i+1],
@@ -774,6 +795,7 @@ gibbs_m_avg_nuisance <- function(data,
                                       eta=eta,
                                       Sigma_fun=Sigma_fun,
                                       corrected=corrected,
+                                      toggle=toggle,
                                       f_param_avg_half=f_param_avg_half,
                                       phi=phi.fit,
                                       sigma_ar=sigma.fit,
@@ -826,6 +848,7 @@ gibbs_m_avg_nuisance <- function(data,
                                       mpg_avg=mpg_avg,
                                       Nb=Nb,
                                       FZ=NULL,
+                                      data=data,
                                       r=r.star,
                                       U=U[,,,i+1],
                                       Z=Z[,i+1],
@@ -844,6 +867,7 @@ gibbs_m_avg_nuisance <- function(data,
                                       eta=eta,
                                       Sigma_fun=Sigma_fun,
                                       corrected=corrected,
+                                      toggle=toggle,
                                       f_param_avg_half=f_param_avg_half,
                                       phi=phi.fit,
                                       sigma_ar=sigma.fit,
@@ -885,6 +909,7 @@ gibbs_m_avg_nuisance <- function(data,
                                       mpg_avg=mpg_avg,
                                       Nb=Nb,
                                       FZ=NULL,
+                                      data=data,
                                       r=r.star,
                                       U=U[,,,i+1],
                                       Z=Z[,i+1],
@@ -903,6 +928,7 @@ gibbs_m_avg_nuisance <- function(data,
                                       eta=eta,
                                       Sigma_fun=Sigma_fun,
                                       corrected=corrected,
+                                      toggle=toggle,
                                       f_param_avg_half=f_param_avg_half,
                                       phi=phi.fit,
                                       sigma_ar=sigma.fit,
@@ -952,11 +978,11 @@ gibbs_m_avg_nuisance <- function(data,
           rejectedPhi <- T
         }
         if (!rejectedPhi) {
-          suppressWarnings(if (sqrt_d) f_param_half.star <- sqrt_cube(f_param.star, excludeBoundary=F)
-          else f_param_half.star <- chol_cube(f_param.star, excludeBoundary=F), classes='warning')
+          suppressWarnings(if (sqrt_d) f_param_avg_half.star <- sqrt_cube(f_param.star, excludeBoundary=F)
+          else f_param_avg_half.star <- chol_cube(f_param.star, excludeBoundary=F), classes='warning')
           phi.fit.star <- list(ar=param__phi.star,
-                               f_param_half=f_param_half.star,
-                               f_param_half_trans=trans_cube(f_param_half.star),
+                               f_param_avg_half=f_param_avg_half.star,
+                               f_param_avg_half_trans=trans_cube(f_param_avg_half.star),
                                beta=param__beta.star,  ##
                                mu_beta=mu_beta,        ## include stuff for prior computation, too
                                V_beta_inv=V_beta_inv,
@@ -966,6 +992,7 @@ gibbs_m_avg_nuisance <- function(data,
                                           mpg_avg=mpg_avg,
                                           Nb=Nb,
                                           FZ=NULL,
+                                          data=data,
                                           r=r[,i+1],
                                           U=U[,,,i+1],
                                           Z=Z[,i+1],
@@ -984,6 +1011,7 @@ gibbs_m_avg_nuisance <- function(data,
                                           eta=eta,
                                           Sigma_fun=Sigma_fun,
                                           corrected=corrected,
+                                          toggle=toggle,
                                           phi=phi.fit.star, #
                                           sigma_ar=sigma.fit,
                                           prior.q=prior.q,
@@ -1017,7 +1045,7 @@ gibbs_m_avg_nuisance <- function(data,
     if (theta_dim > 0) {
       if (corrected) {
         q_for_theta <- get_f_matrix(omega, U[,,,i+1], r[,i+1], Z[,i+1], V[,i+1], W[,i+1], k[,i+1], db.list, prior.cholesky, bspline, degree_bs)
-        f_for_theta <- mult_cube(mult_cube(phi.fit$f_param_half, q_for_theta), phi.fit$f_param_half_trans)
+        f_for_theta <- mult_cube(mult_cube(phi.fit$f_param_avg_half, q_for_theta), phi.fit$f_param_avg_half_trans)
         previous_theta <- theta[,i] # might change for corrected in case of double steps
       } else {
         f_for_theta <- get_f_matrix(omega, U[,,,i+1], r[,i+1], Z[,i+1], V[,i+1], W[,i+1], k[,i+1], db.list, prior.cholesky, bspline, degree_bs)
@@ -1034,6 +1062,7 @@ gibbs_m_avg_nuisance <- function(data,
                                         mpg_avg=mpg_avg,
                                         Nb=Nb,
                                         FZ=NULL, # note
+                                        data=data,
                                         r=r[,i+1],
                                         U=U[,,,i+1],
                                         Z=Z[,i+1],
@@ -1052,6 +1081,7 @@ gibbs_m_avg_nuisance <- function(data,
                                         eta=eta,
                                         Sigma_fun=Sigma_fun,
                                         corrected=corrected,
+                                        toggle=toggle,
                                         f_param_avg_half=f_param_avg_half,
                                         phi=phi.fit,
                                         sigma_ar=sigma.fit,
@@ -1064,6 +1094,7 @@ gibbs_m_avg_nuisance <- function(data,
                                    mpg_avg=mpg_avg,
                                    Nb=Nb,
                                    FZ=NULL, # note
+                                   data=data,
                                    r=r[,i+1],
                                    U=U[,,,i+1],
                                    Z=Z[,i+1],
@@ -1082,6 +1113,7 @@ gibbs_m_avg_nuisance <- function(data,
                                    eta=eta,
                                    Sigma_fun=Sigma_fun,
                                    corrected=corrected,
+                                   toggle=toggle,
                                    f_param_avg_half=f_param_avg_half,
                                    phi=phi.fit,
                                    sigma_ar=sigma.fit,
@@ -1102,6 +1134,7 @@ gibbs_m_avg_nuisance <- function(data,
                                      mpg_avg=mpg_avg,
                                      Nb=Nb,
                                      FZ=NULL, # note
+                                     data=data,
                                      r=r[,i+1],
                                      U=U[,,,i+1],
                                      Z=Z[,i+1],
@@ -1120,6 +1153,7 @@ gibbs_m_avg_nuisance <- function(data,
                                      eta=eta,
                                      Sigma_fun=Sigma_fun,
                                      corrected=corrected,
+                                     toggle=toggle,
                                      f_param_avg_half=f_param_avg_half,
                                      phi=phi.fit,
                                      sigma_ar=sigma.fit,
@@ -1169,11 +1203,11 @@ gibbs_m_avg_nuisance <- function(data,
   #print("Postprocessing results ...")
   keep <- seq(burnin+1, Ntotal, by=thin)
 
-  if (prior.cholesky) {
-    k <- k[,keep]
-  } else {
-    k <- array(data=k[,keep], dim=c(1, length(keep)))
-  }
+  # if (prior.cholesky) {
+  #   k <- k[,keep]
+  # } else {
+  #   k <- array(data=k[,keep], dim=c(1, length(keep)))
+  # }
   r <- r[,keep]
   Z <- Z[,keep]
   U <- U[,,,keep]
@@ -1217,30 +1251,31 @@ gibbs_m_avg_nuisance <- function(data,
 
   # Corrected (not toggled yet)
   #if (corrected && prior.q && (!toggle)) {
-  #  suppressWarnings(if (sqrt_d) f_param_half <- sqrt_cube(psd_varma(lambda, phi.fit$ar, Sigma=sigma.fit)$psd, excludeBoundary=F)
-  #  else f_param_half <- chol_cube(psd_varma(lambda, phi.fit$ar, Sigma=sigma.fit)$psd, excludeBoundary=F), classes='warning')
-  #  f_param_half_trans <- trans_cube(f_param_half)
+  #  suppressWarnings(if (sqrt_d) f_param_avg_half <- sqrt_cube(psd_varma(lambda, phi.fit$ar, Sigma=sigma.fit)$psd, excludeBoundary=F)
+  #  else f_param_avg_half <- chol_cube(psd_varma(lambda, phi.fit$ar, Sigma=sigma.fit)$psd, excludeBoundary=F), classes='warning')
+  #  f_param_avg_half_trans <- trans_cube(f_param_avg_half)
   #}
-  if (corrected) {
-    # Pseudo corrected likelihood
-    f_param_avg_half_trans <- trans_cube(f_param_avg_half)
-  }
   for (isample in 1:length(keep)) {
   #  if (corrected && prior.q) {
   #    if (toggle) {
-  #      suppressWarnings(if (sqrt_d) f_param_half <- sqrt_cube(psd_varma(lambda, param__phi[,,isample], Sigma=sigma.fit)$psd, excludeBoundary=F)
-  #      else f_param_half <- chol_cube(psd_varma(lambda, param__phi[,,isample], Sigma=sigma.fit)$psd, excludeBoundary=F), classes='warning')
-  #      f_param_half_trans <- trans_cube(f_param_half)
+  #      suppressWarnings(if (sqrt_d) f_param_avg_half <- sqrt_cube(psd_varma(lambda, param__phi[,,isample], Sigma=sigma.fit)$psd, excludeBoundary=F)
+  #      else f_param_avg_half <- chol_cube(psd_varma(lambda, param__phi[,,isample], Sigma=sigma.fit)$psd, excludeBoundary=F), classes='warning')
+  #      f_param_avg_half_trans <- trans_cube(f_param_avg_half)
   #    }
   #    q_sample <- get_f_matrix(U[,,,isample], r[,isample], Z[,isample], k[,isample], db.list, prior.cholesky)
-  #    f_sample <- mult_cube(mult_cube(f_param_half, q_sample), f_param_half_trans) # "prior on q=f/f_param"
+  #    f_sample <- mult_cube(mult_cube(f_param_avg_half, q_sample), f_param_avg_half_trans) # "prior on q=f/f_param"
   #  } else {
   #    f_sample <- get_f_matrix(U[,,,isample], r[,isample], Z[,isample], k[,isample], db.list, prior.cholesky)
   #  }
     if (corrected) {
-      # Pseudo corrected likelihood
+      if (toggle) {
+        f_param_avg_half <- chol_cube(psd_varma(lambda, param__phi[,,isample], Sigma=sigma.fit)$psd, excludeBoundary=F)
+        f_param_avg_half_trans <- trans_cube(f_param_avg_half)
+      } else {
+        # Pseudo corrected likelihood
+        f_param_avg_half_trans <- trans_cube(f_param_avg_half)
+      }
       q_sample <- get_f_matrix(omega, U[,,,isample], r[,isample], Z[,isample], V[,isample], W[,isample], k[,isample], db.list, prior.cholesky, bspline, degree_bs)
-      #f_sample <- q_sample
       f_sample <- mult_cube(mult_cube(f_param_avg_half, q_sample), f_param_avg_half_trans) # "prior on q=f/f_param"
     } else {
       f_sample <- get_f_matrix(omega, U[,,,isample], r[,isample], Z[,isample], V[,isample], W[,isample], k[,isample], db.list, prior.cholesky, bspline, degree_bs)
@@ -1327,6 +1362,7 @@ gibbs_m_avg_nuisance <- function(data,
               U=U,
               U__phi=U__phi,
               W=W,
+              fpsd.sample=fpsd.sample,
               fpsd.s=fpsd.s,
               fpsd.mean=fpsd.mean,
               fpsd.s05=fpsd.s05,

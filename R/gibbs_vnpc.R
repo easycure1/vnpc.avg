@@ -2,12 +2,18 @@
 #'
 #' Obtain samples of the posterior of the multivariate corrected likelihood in conjuction with an Hpd AGamma process prior on the spectral density matrix
 #' @param data numerical matrix
+#' @param mpg_avg average periodogram
+#' @param Nb number of blocks
 #' @param samp_freq sampling frequency (default = 2*pi)
 #' @param trunc_freq sampling frequency for truncated data (default = 2*pi)
 #' @param seg_n number of segments (integer >= 1)
 #' @param truncation flag indicating whether the data needs to be truncated (default = FALSE).
 #' @param trunc_freq_lim frequency bounds of the truncated data, an positive integer or a 2-dimensional vector with lower and upper bounds being integers, used for truncation = TRUE only.
+#' @param bspline flag indicating whether using the B-spline
+#' @param degree_bs the degree of the basis function of B-spline
 #' @param corrected flag indicating whether the corrected likelihood is used (default = FALSE).
+#' @param toggle toggle
+#' @param f_param_avg the average psd of a pre-fitted VAR model 
 #' @param var.order VAR order for the parametric working model
 #' @param Ntotal total number of iterations to run the Markov chain
 #' @param burnin number of initial iterations to be discarded
@@ -24,6 +30,9 @@
 #' @param kmax upper bound for polynomial degree of Bernstein-Dirichlet mixture (can be set to Inf, algorithm is faster with kmax<Inf due to pre-computation of basis functions, but values 500<kmax<Inf are very memory intensive)
 #' @param trunc_l,trunc_r left and right truncation of Bernstein polynomial basis functions, 0<=trunc_l<trunc_r<=1
 #' @param coars flag indicating whether coarsened or default bernstein polynomials are used (see Appendix E.1 in Ghosal and van der Vaart 2017)
+#' @param H0.alpha ...
+#' @param H0.beta ...
+#' @param MH ...
 #' @param L truncation parameter of Gamma process
 #' @param mu_beta prior parameter for VAR coefficients, stacked numerical vector
 #' @param V_beta prior parameter for VAR coefficients, Hpd matrix
@@ -44,7 +53,6 @@
 #' @useDynLib vnpc.avg, .registration = TRUE
 #' @export
 #'
-#' @examples
 gibbs_vnpc_avg <- function(data=NULL,
                            mpg_avg,
                            Nb,
@@ -56,6 +64,8 @@ gibbs_vnpc_avg <- function(data=NULL,
                            bspline=FALSE,
                            degree_bs=3,
                            corrected=FALSE,
+                           toggle=FALSE,
+                           f_param_avg=NULL,
                            var.order=NULL,
                            Ntotal,
                            burnin,
@@ -140,7 +150,7 @@ gibbs_vnpc_avg <- function(data=NULL,
                        bernstein_r=trunc_r, # note
                        coarsened=coars, # note
                        L=L,
-                       toggle=TRUE,
+                       toggle=toggle,
                        prior.q=T,
                        mu_beta=mu_beta,
                        V_beta=V_beta,
@@ -161,11 +171,14 @@ gibbs_vnpc_avg <- function(data=NULL,
                                     H0.beta=H0.beta,
                                     MH=MH,
                                     corrected=corrected,
+                                    f_param_avg=f_param_avg,
                                     prior_params=prior_params,
                                     model_params=model_params)
   #mcmc_VNPC <- reduceMemoryStorage_matrixGamma(mcmc)
   #return(mcmc_VNPC)
   return(structure(list(data=data,
+                        k=mcmc_VNPC$k,
+                        psd.post=mcmc_VNPC$fpsd.sample,
                         psd.median=mcmc_VNPC$fpsd.s,
                         psd.p05=mcmc_VNPC$fpsd.s05,
                         psd.p95=mcmc_VNPC$fpsd.s95,
