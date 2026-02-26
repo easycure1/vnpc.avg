@@ -44,7 +44,6 @@
 #' @useDynLib vnpc.avg, .registration = TRUE
 #' @export
 #'
-#' @examples aaa
 gibbs_vnpc_avg <- function(data=NULL,
                            mpg_avg,
                            Nb,
