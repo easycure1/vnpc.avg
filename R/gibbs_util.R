@@ -47,9 +47,9 @@ coarsened_bernstein_i <- function(omega, l, i) {
 #' This is in beyondWhittle(bernstein_polynomials.R)
 #' @param n positive integer determining the number of the (equidistant) evaluation points in [0,1]
 #' @param kmax positive integer for the largest degree
+#' @param normalized whether being normalized
 #' @param bernstein_l,bernstein_r left and right truncation
 #' @param coarsened bool flag indicating whether coarsened or standard Bernstein polynomials are used
-#' @param verbose debugging parameter
 #' @return A list of length kmax, where the k-th list element is a matrix containing the polynomial basis of degree k
 #' @keywords internal
 dbList <- function(n, kmax, normalized=F, bernstein_l=0, bernstein_r=1, coarsened=F) {

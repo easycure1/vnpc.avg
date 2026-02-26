@@ -111,6 +111,9 @@ list containing the following fields:
 \description{
 Obtain samples of the posterior of the multivariate corrected likelihood in conjuction with an Hpd AGamma process prior on the spectral density matrix
 }
+\examples{
+aaa
+}
 \references{
 Y. Liu (2023)
 \emph{A Nonparametrically corrected likelihood for Bayesian spectral analysis of multivariate time series}
