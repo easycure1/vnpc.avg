@@ -16,6 +16,8 @@ gibbs_vnpc_avg(
   bspline = FALSE,
   degree_bs = 3,
   corrected = FALSE,
+  toggle = FALSE,
+  f_param_avg = NULL,
   var.order = NULL,
   Ntotal,
   burnin,

@@ -175,21 +175,15 @@ double llike_whittle_avg(const arma::cx_cube& mpg_avg, const arma::cx_cube& f, i
 //' Based on the complex Wishart distribution
 //' @keywords internal
 // [[Rcpp::export]]
- double llike_corrected_whittle_sum(const arma::cx_cube& FZ, const arma::cx_cube& f, 
-                                    const arma::cx_cube& f_param_avg_half, int freq) {
-   const int d = FZ.n_cols;
-   const int N = FZ.n_rows;
-   const int K = FZ.n_slices;
+ double llike_corrected_avg(const arma::cx_cube& mpg_avg, const arma::cx_cube& f, 
+                                    const arma::cx_cube& f_param_avg_half, int Nb) {
+   const int N = mpg_avg.n_slices;
    double res(0.0);
    for (int j=1; j<N-1; ++j) {
-     arma::cx_mat mpg_avg(d, d, arma::fill::zeros);
-     for (int k=0; k<K; ++k) {
-       mpg_avg += arma::trans(FZ.slice(k).row(j)) * FZ.slice(k).row(j) / freq;
-     }
      arma::cx_mat f_corrected = f_param_avg_half.slice(j) * f.slice(j) *
        arma::trans(f_param_avg_half.slice(j));
-     std::complex<double> tr = arma::trace(arma::inv(f_corrected) * mpg_avg);
-     res += K * arma::log_det(f_corrected).real() + K * tr.real();
+     std::complex<double> tr = arma::trace(arma::inv(f_corrected) * mpg_avg.slice(j));
+     res += Nb * arma::log_det(f_corrected).real() +Nb * tr.real();
    }
    
    return -res;

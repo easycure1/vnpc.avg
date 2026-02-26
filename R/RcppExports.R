@@ -112,8 +112,8 @@ llike_whittle_avg <- function(mpg_avg, f, Nb) {
 #' Sum of the segmented log pseudo corrected Whittle likelihood over all frequencies
 #' Based on the complex Wishart distribution
 #' @keywords internal
-llike_corrected_whittle_sum <- function(FZ, f, f_param_avg_half, freq) {
-    .Call(`_vnpc_avg_llike_corrected_whittle_sum`, FZ, f, f_param_avg_half, freq)
+llike_corrected_avg <- function(mpg_avg, f, f_param_avg_half, Nb) {
+    .Call(`_vnpc_avg_llike_corrected_avg`, mpg_avg, f, f_param_avg_half, Nb)
 }
 
 #' Epsilon process (residuals) of VAR model in beyondWhittle(varma.cpp)

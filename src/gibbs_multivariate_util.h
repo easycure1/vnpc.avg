@@ -19,8 +19,8 @@ arma::cube realValuedPsd(Rcpp::ComplexVector f_);
 double llike_whittle(const arma::cx_mat& FZ, const arma::cx_cube& f);
 double llike_whittle_sum(const arma::cx_mat& FZ, const arma::cx_cube& f, int freq);
 double llike_whittle_avg(const arma::cx_mat& mpg_avg, const arma::cx_cube& f, int Nb);
-double llike_corrected_whittle_sum(const arma::cx_mat& FZ, const arma::cx_cube& f,
-                         const arma::cx_cube& f_param_half_avg, int freq);
+double llike_corrected_avg(const arma::cx_mat& mpg_avg, const arma::cx_cube& f,
+                         const arma::cx_cube& f_param_half_avg, int Nb);
 arma::mat epsilon_var(arma::mat zt, arma::mat ar);
 double sldmvnorm(arma::mat z_t, arma::mat Sigma);
 arma::mat acvToeplitz(arma::mat acv);

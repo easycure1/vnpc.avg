@@ -20,6 +20,7 @@ gibbs_m_avg_nuisance(
   H0.beta = NULL,
   MH = NULL,
   corrected,
+  f_param_avg = NULL,
   prior_params,
   model_params
 )
