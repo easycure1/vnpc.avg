@@ -45,25 +45,34 @@ coh <- function(Sii, Sjj, Sij) abs(Sij) / sqrt(Sii * Sjj)
 
 coh_mcmc <- function(Sii, Sjj, Sij, Sji) sqrt(Sij^2+Sji^2) / sqrt(Sii * Sjj)
 
+sig <- apply(data_npy, 2, sd)          # length d
+d   <- length(sig)
+nf  <- dim(true_psd)[3]
+
+true_psd_std <- true_psd
+for (k in 1:nf) {
+  true_psd_std[,,k] <- true_psd[,,k] / outer(sig, sig)   # elementwise divide
+}
+
 true_psd_gg <- data.frame(
-  fx = true_matrix_sub[1634:6321,1,1]/sd(true_matrix_sub[1634:6321,1,1]),
-  fy = true_matrix_sub[1634:6321,2,2]/sd(true_matrix_sub[1634:6321,2,2]),
-  fz = true_matrix_sub[1634:6321,3,3]/sd(true_matrix_sub[1634:6321,3,3]),
-  fxy = true_matrix_sub[1634:6321,1,2]/sd(true_matrix_sub[1634:6321,1,2]),
-  fxz = true_matrix_sub[1634:6321,1,3]/sd(true_matrix_sub[1634:6321,1,3]),
-  fyz = true_matrix_sub[1634:6321,2,3]/sd(true_matrix_sub[1634:6321,2,3]),
+  fx = true_psd_std[1,1,],
+  fy = true_psd_std[2,2,],
+  fz = true_psd_std[3,3,],
+  fxy = true_psd_std[1,2,],
+  fxz = true_psd_std[1,3,],
+  fyz = true_psd_std[2,3,],
   fyx = true_matrix_sub[1634:6321,2,1]/sd(true_matrix_sub[1634:6321,2,1]),
   fzx = true_matrix_sub[1634:6321,3,1]/sd(true_matrix_sub[1634:6321,3,1]),
   fzy = true_matrix_sub[1634:6321,3,2]/sd(true_matrix_sub[1634:6321,3,2]),
-  cohxy = coh(true_matrix_sub[1634:6321,1,1],
-              true_matrix_sub[1634:6321,2,2],
-              true_matrix_sub[1634:6321,1,2]),
-  cohxz = coh(true_matrix_sub[1634:6321,1,1],
-              true_matrix_sub[1634:6321,3,3],
-              true_matrix_sub[1634:6321,1,3]),
-  cohyz = coh(true_matrix_sub[1634:6321,2,2],
-              true_matrix_sub[1634:6321,3,3],
-              true_matrix_sub[1634:6321,2,3]),
+  cohxy = coh(true_psd_std[1,1,],
+              true_psd_std[2,2,],
+              true_psd_std[1,2,]),
+  cohxz = coh(true_psd_std[1,1,],
+              true_psd_std[3,3,],
+              true_psd_std[1,3,]),
+  cohyz = coh(true_psd_std[2,2,],
+              true_psd_std[3,3,],
+              true_psd_std[2,3,]),
   freq = freq_true_sub[1634:6321]
 )
 
@@ -117,24 +126,27 @@ hann_window <- hanning(4096)
 load("C:/Users/Yixuan/Documents/PhD/LISA/results/original/simulated_data/1yr/mcmc_vnp_avg_lisa_simu_1yr_new_4096.RData")
 
 vnp_gg <- data.frame(
-  fx = mcmc_vnp_avg$psd.median[1,1,3:2049] * mean(hann_window^2)*2,
-  fy = mcmc_vnp_avg$psd.median[2,2,3:2049] * mean(hann_window^2)*2,
-  fz = mcmc_vnp_avg$psd.median[3,3,3:2049] * mean(hann_window^2)*2,
-  fxy = mcmc_vnp_avg$psd.median[1,2,3:2049] * mean(hann_window^2)*2,
-  fxz = mcmc_vnp_avg$psd.median[1,3,3:2049] * mean(hann_window^2)*2,
-  fyz = mcmc_vnp_avg$psd.median[2,3,3:2049] * mean(hann_window^2)*2,
-  fyx = mcmc_vnp_avg$psd.median[2,1,3:2049] * mean(hann_window^2)*2,
-  fzx = mcmc_vnp_avg$psd.median[3,1,3:2049] * mean(hann_window^2)*2,
-  fzy = mcmc_vnp_avg$psd.median[3,2,3:2049] * mean(hann_window^2)*2,
-  cohxy = coh(mcmc_vnp_avg$psd.median[1,1,3:2049],
-              mcmc_vnp_avg$psd.median[2,2,3:2049],
-              mcmc_vnp_avg$psd.median[1,2,3:2049]),
-  cohxz = coh(mcmc_vnp_avg$psd.median[1,1,3:2049],
-              mcmc_vnp_avg$psd.median[3,3,3:2049],
-              mcmc_vnp_avg$psd.median[1,3,3:2049]),
-  cohyz = coh(mcmc_vnp_avg$psd.median[2,2,3:2049],
-              mcmc_vnp_avg$psd.median[3,3,3:2049],
-              mcmc_vnp_avg$psd.median[2,3,3:2049]),
+  fx = mcmc_vnp_avg$psd.median[1,1,3:2049]/mean(hann_window^2)*2,
+  fy = mcmc_vnp_avg$psd.median[2,2,3:2049]/mean(hann_window^2)*2,
+  fz = mcmc_vnp_avg$psd.median[3,3,3:2049]/mean(hann_window^2)*2,
+  fxy = mcmc_vnp_avg$psd.median[1,2,3:2049]/mean(hann_window^2)*2,
+  fxz = mcmc_vnp_avg$psd.median[1,3,3:2049]/mean(hann_window^2)*2,
+  fyz = mcmc_vnp_avg$psd.median[2,3,3:2049]/mean(hann_window^2)*2,
+  fyx = mcmc_vnp_avg$psd.median[2,1,3:2049]/mean(hann_window^2)*2,
+  fzx = mcmc_vnp_avg$psd.median[3,1,3:2049]/mean(hann_window^2)*2,
+  fzy = mcmc_vnp_avg$psd.median[3,2,3:2049]/mean(hann_window^2)*2,
+  cohxy = coh_mcmc(mcmc_vnp_avg$psd.median[1,1,3:2049],
+                   mcmc_vnp_avg$psd.median[2,2,3:2049],
+                   mcmc_vnp_avg$psd.median[1,2,3:2049],
+                   mcmc_vnp_avg$psd.median[2,1,3:2049]),
+  cohxz = coh_mcmc(mcmc_vnp_avg$psd.median[1,1,3:2049],
+                   mcmc_vnp_avg$psd.median[3,3,3:2049],
+                   mcmc_vnp_avg$psd.median[1,3,3:2049],
+                   mcmc_vnp_avg$psd.median[3,1,3:2049]),
+  cohyz = coh_mcmc(mcmc_vnp_avg$psd.median[2,2,3:2049],
+                   mcmc_vnp_avg$psd.median[3,3,3:2049],
+                   mcmc_vnp_avg$psd.median[2,3,3:2049],
+                   mcmc_vnp_avg$psd.median[3,2,3:2049]),
   freq = freq_vnp[3:2049]
 )
 
@@ -142,24 +154,27 @@ vnp_gg <- data.frame(
 load("C:/Users/Yixuan/Documents/PhD/LISA/results/original/simulated_data/1yr/mcmc_vnpc_avg_order_200_lisa_simu_1yr_4096_trunc_new.RData")
 
 vnpc_200_gg <- data.frame(
-  fx = mcmc_vnpc_avg$psd.median[1,1,3:2049] * mean(hann_window^2)*2,
-  fy = mcmc_vnpc_avg$psd.median[2,2,3:2049] * mean(hann_window^2)*2,
-  fz = mcmc_vnpc_avg$psd.median[3,3,3:2049] * mean(hann_window^2)*2,
-  fxy = mcmc_vnpc_avg$psd.median[1,2,3:2049] * mean(hann_window^2)*2,
-  fxz = mcmc_vnpc_avg$psd.median[1,3,3:2049] * mean(hann_window^2)*2,
-  fyz = mcmc_vnpc_avg$psd.median[2,3,3:2049] * mean(hann_window^2)*2,
-  fyx = mcmc_vnpc_avg$psd.median[2,1,3:2049] * mean(hann_window^2)*2,
-  fzx = mcmc_vnpc_avg$psd.median[3,1,3:2049] * mean(hann_window^2)*2,
-  fzy = mcmc_vnpc_avg$psd.median[3,2,3:2049] * mean(hann_window^2)*2,
-  cohxy = coh(mcmc_vnpc_avg$psd.median[1,1,3:2049],
-              mcmc_vnpc_avg$psd.median[2,2,3:2049],
-              mcmc_vnpc_avg$psd.median[1,2,3:2049]),
-  cohxz = coh(mcmc_vnpc_avg$psd.median[1,1,3:2049],
-              mcmc_vnpc_avg$psd.median[3,3,3:2049],
-              mcmc_vnpc_avg$psd.median[1,3,3:2049]),
-  cohyz = coh(mcmc_vnpc_avg$psd.median[2,2,3:2049],
-              mcmc_vnpc_avg$psd.median[3,3,3:2049],
-              mcmc_vnpc_avg$psd.median[2,3,3:2049]),
+  fx = mcmc_vnpc_avg$psd.median[1,1,3:2049]/mean(hann_window^2)*2,
+  fy = mcmc_vnpc_avg$psd.median[2,2,3:2049]/mean(hann_window^2)*2,
+  fz = mcmc_vnpc_avg$psd.median[3,3,3:2049]/mean(hann_window^2)*2,
+  fxy = mcmc_vnpc_avg$psd.median[1,2,3:2049]/mean(hann_window^2)*2,
+  fxz = mcmc_vnpc_avg$psd.median[1,3,3:2049]/mean(hann_window^2)*2,
+  fyz = mcmc_vnpc_avg$psd.median[2,3,3:2049]/mean(hann_window^2)*2,
+  fyx = mcmc_vnpc_avg$psd.median[2,1,3:2049]/mean(hann_window^2)*2,
+  fzx = mcmc_vnpc_avg$psd.median[3,1,3:2049]/mean(hann_window^2)*2,
+  fzy = mcmc_vnpc_avg$psd.median[3,2,3:2049]/mean(hann_window^2)*2,
+  cohxy = coh_mcmc(mcmc_vnpc_avg$psd.median[1,1,3:2049],
+                   mcmc_vnpc_avg$psd.median[2,2,3:2049],
+                   mcmc_vnpc_avg$psd.median[1,2,3:2049],
+                   mcmc_vnpc_avg$psd.median[2,1,3:2049]),
+  cohxz = coh_mcmc(mcmc_vnpc_avg$psd.median[1,1,3:2049],
+                   mcmc_vnpc_avg$psd.median[3,3,3:2049],
+                   mcmc_vnpc_avg$psd.median[1,3,3:2049],
+                   mcmc_vnpc_avg$psd.median[3,1,3:2049]),
+  cohyz = coh_mcmc(mcmc_vnpc_avg$psd.median[2,2,3:2049],
+                   mcmc_vnpc_avg$psd.median[3,3,3:2049],
+                   mcmc_vnpc_avg$psd.median[2,3,3:2049],
+                   mcmc_vnpc_avg$psd.median[3,2,3:2049]),
   freq = freq_vnp[3:2049]
 )
 
@@ -167,15 +182,15 @@ vnpc_200_gg <- data.frame(
 load("C:/Users/Yixuan/Documents/PhD/LISA/results/original/simulated_data/1yr/mcmc_vnpc_avg_order_300_lisa_simu_1yr_4096_trunc_new.RData")
 
 vnpc_300_gg <- data.frame(
-  fx = mcmc_vnpc_avg$psd.median[1,1,3:2049] * mean(hann_window^2)*2,
-  fy = mcmc_vnpc_avg$psd.median[2,2,3:2049] * mean(hann_window^2)*2,
-  fz = mcmc_vnpc_avg$psd.median[3,3,3:2049] * mean(hann_window^2)*2,
-  fxy = mcmc_vnpc_avg$psd.median[1,2,3:2049] * mean(hann_window^2)*2,
-  fxz = mcmc_vnpc_avg$psd.median[1,3,3:2049] * mean(hann_window^2)*2,
-  fyz = mcmc_vnpc_avg$psd.median[2,3,3:2049] * mean(hann_window^2)*2,
-  fyx = mcmc_vnpc_avg$psd.median[2,1,3:2049] * mean(hann_window^2)*2,
-  fzx = mcmc_vnpc_avg$psd.median[3,1,3:2049] * mean(hann_window^2)*2,
-  fzy = mcmc_vnpc_avg$psd.median[3,2,3:2049] * mean(hann_window^2)*2,
+  fx = mcmc_vnpc_avg$psd.median[1,1,3:2049]/mean(hann_window^2)*2,
+  fy = mcmc_vnpc_avg$psd.median[2,2,3:2049]/mean(hann_window^2)*2,
+  fz = mcmc_vnpc_avg$psd.median[3,3,3:2049]/mean(hann_window^2)*2,
+  fxy = mcmc_vnpc_avg$psd.median[1,2,3:2049]/mean(hann_window^2)*2,
+  fxz = mcmc_vnpc_avg$psd.median[1,3,3:2049]/mean(hann_window^2)*2,
+  fyz = mcmc_vnpc_avg$psd.median[2,3,3:2049]/mean(hann_window^2)*2,
+  fyx = mcmc_vnpc_avg$psd.median[2,1,3:2049]/mean(hann_window^2)*2,
+  fzx = mcmc_vnpc_avg$psd.median[3,1,3:2049]/mean(hann_window^2)*2,
+  fzy = mcmc_vnpc_avg$psd.median[3,2,3:2049]/mean(hann_window^2)*2,
   cohxy = coh(mcmc_vnpc_avg$psd.median[1,1,3:2049],
               mcmc_vnpc_avg$psd.median[2,2,3:2049],
               mcmc_vnpc_avg$psd.median[1,2,3:2049]),
@@ -242,15 +257,15 @@ vnpc_99_gg <- data.frame(
 load("C:/Users/Yixuan/Documents/PhD/LISA/data/LISA_data/lisa_simulated_noise_dataset_1yr/new/mpgm_avg_4096.RData")
 
 avg_mpg_gg <- data.frame(
-  fx = Re(mpgm_avg[1,1,3:2049]) * mean(hann_window^2)*2,
-  fy = Re(mpgm_avg[2,2,3:2049]) * mean(hann_window^2)*2,
-  fz = Re(mpgm_avg[3,3,3:2049]) * mean(hann_window^2)*2,
-  fxy = Re(mpgm_avg[1,2,3:2049]) * mean(hann_window^2)*2,
-  fxz = Re(mpgm_avg[1,3,3:2049]) * mean(hann_window^2)*2,
-  fyz = Re(mpgm_avg[2,3,3:2049]) * mean(hann_window^2)*2,
-  fyx = Im(mpgm_avg[2,1,3:2049]) * mean(hann_window^2)*2,
-  fzx = Im(mpgm_avg[3,1,3:2049]) * mean(hann_window^2)*2,
-  fzy = Im(mpgm_avg[3,2,3:2049]) * mean(hann_window^2)*2,
+  fx = Re(mpgm_avg[1,1,3:2049])/mean(hann_window^2)*2,
+  fy = Re(mpgm_avg[2,2,3:2049])/mean(hann_window^2)*2,
+  fz = Re(mpgm_avg[3,3,3:2049])/mean(hann_window^2)*2,
+  fxy = Re(mpgm_avg[1,2,3:2049])/mean(hann_window^2)*2,
+  fxz = Re(mpgm_avg[1,3,3:2049])/mean(hann_window^2)*2,
+  fyz = Re(mpgm_avg[2,3,3:2049])/mean(hann_window^2)*2,
+  fyx = Im(mpgm_avg[2,1,3:2049])/mean(hann_window^2)*2,
+  fzx = Im(mpgm_avg[3,1,3:2049])/mean(hann_window^2)*2,
+  fzy = Im(mpgm_avg[3,2,3:2049])/mean(hann_window^2)*2,
   freq = freq_vnp[3:2049]
 )
 
