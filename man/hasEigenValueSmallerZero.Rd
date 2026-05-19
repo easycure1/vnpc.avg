@@ -2,11 +2,11 @@
 % Please edit documentation in R/RcppExports.R
 \name{hasEigenValueSmallerZero}
 \alias{hasEigenValueSmallerZero}
-\title{Does a matrix have an eigenvalue smaller than 0? in beyondWhittle(matrix_cube.cpp)}
+\title{Does a matrix have an eigenvalue smaller than 0?}
 \usage{
 hasEigenValueSmallerZero(A, TOL = 0)
 }
 \description{
-Does a matrix have an eigenvalue smaller than 0? in beyondWhittle(matrix_cube.cpp)
+Does a matrix have an eigenvalue smaller than 0?
 }
 \keyword{internal}

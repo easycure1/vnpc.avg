@@ -11,90 +11,162 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// beta_fun_AGamma_process_cube
-NumericVector beta_fun_AGamma_process_cube(ComplexVector U_, ComplexVector Sigma_);
-RcppExport SEXP _vnpc_avg_beta_fun_AGamma_process_cube(SEXP U_SEXP, SEXP Sigma_SEXP) {
+// gibbs_multivariate_nuisance_cpp
+List gibbs_multivariate_nuisance_cpp(arma::cx_cube mpg_avg, arma::cx_cube f_param_avg_half, int d, int Nb, arma::cx_mat FZ, NumericVector eps_r, NumericVector eps_Z, NumericVector eps_U, int k_0, arma::vec r_0, arma::vec Z_0, arma::mat U_phi_0, arma::vec phi_def, double eta, double omega, arma::cx_mat Sigma, int Ntotal, int print_interval, double numerical_thresh, bool verbose, int L, double k_theta, List dbList, bool corrected);
+RcppExport SEXP _vnpc_avg_gibbs_multivariate_nuisance_cpp(SEXP mpg_avgSEXP, SEXP f_param_avg_halfSEXP, SEXP dSEXP, SEXP NbSEXP, SEXP FZSEXP, SEXP eps_rSEXP, SEXP eps_ZSEXP, SEXP eps_USEXP, SEXP k_0SEXP, SEXP r_0SEXP, SEXP Z_0SEXP, SEXP U_phi_0SEXP, SEXP phi_defSEXP, SEXP etaSEXP, SEXP omegaSEXP, SEXP SigmaSEXP, SEXP NtotalSEXP, SEXP print_intervalSEXP, SEXP numerical_threshSEXP, SEXP verboseSEXP, SEXP LSEXP, SEXP k_thetaSEXP, SEXP dbListSEXP, SEXP correctedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< ComplexVector >::type U_(U_SEXP);
-    Rcpp::traits::input_parameter< ComplexVector >::type Sigma_(Sigma_SEXP);
-    rcpp_result_gen = Rcpp::wrap(beta_fun_AGamma_process_cube(U_, Sigma_));
-    return rcpp_result_gen;
-END_RCPP
-}
-// get_mix_rcpp
-arma::cx_cube get_mix_rcpp(ComplexVector w_, arma::cx_mat densities);
-RcppExport SEXP _vnpc_avg_get_mix_rcpp(SEXP w_SEXP, SEXP densitiesSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< ComplexVector >::type w_(w_SEXP);
-    Rcpp::traits::input_parameter< arma::cx_mat >::type densities(densitiesSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_mix_rcpp(w_, densities));
-    return rcpp_result_gen;
-END_RCPP
-}
-// mixtureWeight_DP
-NumericVector mixtureWeight_DP(NumericVector p, NumericVector w, unsigned k);
-RcppExport SEXP _vnpc_avg_mixtureWeight_DP(SEXP pSEXP, SEXP wSEXP, SEXP kSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type p(pSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type w(wSEXP);
-    Rcpp::traits::input_parameter< unsigned >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(mixtureWeight_DP(p, w, k));
-    return rcpp_result_gen;
-END_RCPP
-}
-// get_mix_rcpp_bs
-arma::cx_cube get_mix_rcpp_bs(ComplexVector w_, arma::cx_mat densities);
-RcppExport SEXP _vnpc_avg_get_mix_rcpp_bs(SEXP w_SEXP, SEXP densitiesSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< ComplexVector >::type w_(w_SEXP);
-    Rcpp::traits::input_parameter< arma::cx_mat >::type densities(densitiesSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_mix_rcpp_bs(w_, densities));
-    return rcpp_result_gen;
-END_RCPP
-}
-// cubeTimesVector
-arma::cx_cube cubeTimesVector(ComplexVector U_, NumericVector r);
-RcppExport SEXP _vnpc_avg_cubeTimesVector(SEXP U_SEXP, SEXP rSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< ComplexVector >::type U_(U_SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type r(rSEXP);
-    rcpp_result_gen = Rcpp::wrap(cubeTimesVector(U_, r));
-    return rcpp_result_gen;
-END_RCPP
-}
-// get_w_rcpp
-arma::cx_cube get_w_rcpp(ComplexVector p_, NumericVector Z, unsigned k);
-RcppExport SEXP _vnpc_avg_get_w_rcpp(SEXP p_SEXP, SEXP ZSEXP, SEXP kSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< ComplexVector >::type p_(p_SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Z(ZSEXP);
-    Rcpp::traits::input_parameter< unsigned >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_w_rcpp(p_, Z, k));
-    return rcpp_result_gen;
-END_RCPP
-}
-// lalphaStar_AGamma
-NumericVector lalphaStar_AGamma(ComplexVector U_, double eta, ComplexVector Sigma_);
-RcppExport SEXP _vnpc_avg_lalphaStar_AGamma(SEXP U_SEXP, SEXP etaSEXP, SEXP Sigma_SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< ComplexVector >::type U_(U_SEXP);
+    Rcpp::traits::input_parameter< arma::cx_cube >::type mpg_avg(mpg_avgSEXP);
+    Rcpp::traits::input_parameter< arma::cx_cube >::type f_param_avg_half(f_param_avg_halfSEXP);
+    Rcpp::traits::input_parameter< int >::type d(dSEXP);
+    Rcpp::traits::input_parameter< int >::type Nb(NbSEXP);
+    Rcpp::traits::input_parameter< arma::cx_mat >::type FZ(FZSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type eps_r(eps_rSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type eps_Z(eps_ZSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type eps_U(eps_USEXP);
+    Rcpp::traits::input_parameter< int >::type k_0(k_0SEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type r_0(r_0SEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type Z_0(Z_0SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type U_phi_0(U_phi_0SEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type phi_def(phi_defSEXP);
     Rcpp::traits::input_parameter< double >::type eta(etaSEXP);
-    Rcpp::traits::input_parameter< ComplexVector >::type Sigma_(Sigma_SEXP);
-    rcpp_result_gen = Rcpp::wrap(lalphaStar_AGamma(U_, eta, Sigma_));
+    Rcpp::traits::input_parameter< double >::type omega(omegaSEXP);
+    Rcpp::traits::input_parameter< arma::cx_mat >::type Sigma(SigmaSEXP);
+    Rcpp::traits::input_parameter< int >::type Ntotal(NtotalSEXP);
+    Rcpp::traits::input_parameter< int >::type print_interval(print_intervalSEXP);
+    Rcpp::traits::input_parameter< double >::type numerical_thresh(numerical_threshSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    Rcpp::traits::input_parameter< int >::type L(LSEXP);
+    Rcpp::traits::input_parameter< double >::type k_theta(k_thetaSEXP);
+    Rcpp::traits::input_parameter< List >::type dbList(dbListSEXP);
+    Rcpp::traits::input_parameter< bool >::type corrected(correctedSEXP);
+    rcpp_result_gen = Rcpp::wrap(gibbs_multivariate_nuisance_cpp(mpg_avg, f_param_avg_half, d, Nb, FZ, eps_r, eps_Z, eps_U, k_0, r_0, Z_0, U_phi_0, phi_def, eta, omega, Sigma, Ntotal, print_interval, numerical_thresh, verbose, L, k_theta, dbList, corrected));
+    return rcpp_result_gen;
+END_RCPP
+}
+// realValuedPsd
+arma::cube realValuedPsd(ComplexVector f_);
+RcppExport SEXP _vnpc_avg_realValuedPsd(SEXP f_SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< ComplexVector >::type f_(f_SEXP);
+    rcpp_result_gen = Rcpp::wrap(realValuedPsd(f_));
+    return rcpp_result_gen;
+END_RCPP
+}
+// complexValuedPsd
+arma::cx_cube complexValuedPsd(NumericVector f_);
+RcppExport SEXP _vnpc_avg_complexValuedPsd(SEXP f_SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type f_(f_SEXP);
+    rcpp_result_gen = Rcpp::wrap(complexValuedPsd(f_));
+    return rcpp_result_gen;
+END_RCPP
+}
+// llike_whittle_avg
+double llike_whittle_avg(const arma::cx_cube& mpg_avg, const arma::cx_cube& f, const int& Nb);
+RcppExport SEXP _vnpc_avg_llike_whittle_avg(SEXP mpg_avgSEXP, SEXP fSEXP, SEXP NbSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::cx_cube& >::type mpg_avg(mpg_avgSEXP);
+    Rcpp::traits::input_parameter< const arma::cx_cube& >::type f(fSEXP);
+    Rcpp::traits::input_parameter< const int& >::type Nb(NbSEXP);
+    rcpp_result_gen = Rcpp::wrap(llike_whittle_avg(mpg_avg, f, Nb));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_f_matrix
+arma::cx_cube get_f_matrix(arma::mat U_phi, arma::vec r, arma::vec Z, int k, Rcpp::List dbList);
+RcppExport SEXP _vnpc_avg_get_f_matrix(SEXP U_phiSEXP, SEXP rSEXP, SEXP ZSEXP, SEXP kSEXP, SEXP dbListSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type U_phi(U_phiSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type r(rSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type Z(ZSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type dbList(dbListSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_f_matrix(U_phi, r, Z, k, dbList));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_CFZ_q
+arma::cx_mat get_CFZ_q(const arma::cx_mat FZ, const arma::cx_cube q, const arma::cx_cube f_param_half);
+RcppExport SEXP _vnpc_avg_get_CFZ_q(SEXP FZSEXP, SEXP qSEXP, SEXP f_param_halfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::cx_mat >::type FZ(FZSEXP);
+    Rcpp::traits::input_parameter< const arma::cx_cube >::type q(qSEXP);
+    Rcpp::traits::input_parameter< const arma::cx_cube >::type f_param_half(f_param_halfSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_CFZ_q(FZ, q, f_param_half));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_CFZ_q_sq
+arma::cx_mat get_CFZ_q_sq(const arma::cx_mat FZ, const arma::cx_cube q, const arma::cx_cube f_param_half);
+RcppExport SEXP _vnpc_avg_get_CFZ_q_sq(SEXP FZSEXP, SEXP qSEXP, SEXP f_param_halfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::cx_mat >::type FZ(FZSEXP);
+    Rcpp::traits::input_parameter< const arma::cx_cube >::type q(qSEXP);
+    Rcpp::traits::input_parameter< const arma::cx_cube >::type f_param_half(f_param_halfSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_CFZ_q_sq(FZ, q, f_param_half));
+    return rcpp_result_gen;
+END_RCPP
+}
+// chol_cube
+arma::cx_cube chol_cube(arma::cx_cube f_, bool excludeBoundary);
+RcppExport SEXP _vnpc_avg_chol_cube(SEXP f_SEXP, SEXP excludeBoundarySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::cx_cube >::type f_(f_SEXP);
+    Rcpp::traits::input_parameter< bool >::type excludeBoundary(excludeBoundarySEXP);
+    rcpp_result_gen = Rcpp::wrap(chol_cube(f_, excludeBoundary));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sqrt_cube
+arma::cx_cube sqrt_cube(arma::cx_cube f_, bool excludeBoundary);
+RcppExport SEXP _vnpc_avg_sqrt_cube(SEXP f_SEXP, SEXP excludeBoundarySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::cx_cube >::type f_(f_SEXP);
+    Rcpp::traits::input_parameter< bool >::type excludeBoundary(excludeBoundarySEXP);
+    rcpp_result_gen = Rcpp::wrap(sqrt_cube(f_, excludeBoundary));
+    return rcpp_result_gen;
+END_RCPP
+}
+// llike_corrected_avg
+double llike_corrected_avg(const arma::cx_cube& mpg_avg, const arma::cx_cube& f, const arma::cx_cube& f_param_avg_half, const int& Nb);
+RcppExport SEXP _vnpc_avg_llike_corrected_avg(SEXP mpg_avgSEXP, SEXP fSEXP, SEXP f_param_avg_halfSEXP, SEXP NbSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::cx_cube& >::type mpg_avg(mpg_avgSEXP);
+    Rcpp::traits::input_parameter< const arma::cx_cube& >::type f(fSEXP);
+    Rcpp::traits::input_parameter< const arma::cx_cube& >::type f_param_avg_half(f_param_avg_halfSEXP);
+    Rcpp::traits::input_parameter< const int& >::type Nb(NbSEXP);
+    rcpp_result_gen = Rcpp::wrap(llike_corrected_avg(mpg_avg, f, f_param_avg_half, Nb));
+    return rcpp_result_gen;
+END_RCPP
+}
+// logdet_cube_sum
+double logdet_cube_sum(const arma::cx_cube f);
+RcppExport SEXP _vnpc_avg_logdet_cube_sum(SEXP fSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::cx_cube >::type f(fSEXP);
+    rcpp_result_gen = Rcpp::wrap(logdet_cube_sum(f));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -120,216 +192,59 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// varma_transfer2psd
-arma::cx_cube varma_transfer2psd(ComplexVector transfer_ar_, ComplexVector transfer_ma_, arma::cx_mat sigma);
-RcppExport SEXP _vnpc_avg_varma_transfer2psd(SEXP transfer_ar_SEXP, SEXP transfer_ma_SEXP, SEXP sigmaSEXP) {
+// hasEigenValueSmallerZero
+bool hasEigenValueSmallerZero(arma::cx_mat A, double TOL);
+RcppExport SEXP _vnpc_avg_hasEigenValueSmallerZero(SEXP ASEXP, SEXP TOLSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< ComplexVector >::type transfer_ar_(transfer_ar_SEXP);
-    Rcpp::traits::input_parameter< ComplexVector >::type transfer_ma_(transfer_ma_SEXP);
-    Rcpp::traits::input_parameter< arma::cx_mat >::type sigma(sigmaSEXP);
-    rcpp_result_gen = Rcpp::wrap(varma_transfer2psd(transfer_ar_, transfer_ma_, sigma));
+    Rcpp::traits::input_parameter< arma::cx_mat >::type A(ASEXP);
+    Rcpp::traits::input_parameter< double >::type TOL(TOLSEXP);
+    rcpp_result_gen = Rcpp::wrap(hasEigenValueSmallerZero(A, TOL));
     return rcpp_result_gen;
 END_RCPP
 }
-// transfer_polynomial
-arma::cx_cube transfer_polynomial(NumericVector lambda, arma::mat coef);
-RcppExport SEXP _vnpc_avg_transfer_polynomial(SEXP lambdaSEXP, SEXP coefSEXP) {
+// acvMatrix
+NumericMatrix acvMatrix(NumericVector acv);
+RcppExport SEXP _vnpc_avg_acvMatrix(SEXP acvSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type coef(coefSEXP);
-    rcpp_result_gen = Rcpp::wrap(transfer_polynomial(lambda, coef));
+    Rcpp::traits::input_parameter< NumericVector >::type acv(acvSEXP);
+    rcpp_result_gen = Rcpp::wrap(acvMatrix(acv));
     return rcpp_result_gen;
 END_RCPP
 }
-// realValuedPsd
-arma::cube realValuedPsd(ComplexVector f_);
-RcppExport SEXP _vnpc_avg_realValuedPsd(SEXP f_SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< ComplexVector >::type f_(f_SEXP);
-    rcpp_result_gen = Rcpp::wrap(realValuedPsd(f_));
-    return rcpp_result_gen;
-END_RCPP
-}
-// llike_whittle
-double llike_whittle(const arma::cx_mat& FZ, const arma::cx_cube& f);
-RcppExport SEXP _vnpc_avg_llike_whittle(SEXP FZSEXP, SEXP fSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::cx_mat& >::type FZ(FZSEXP);
-    Rcpp::traits::input_parameter< const arma::cx_cube& >::type f(fSEXP);
-    rcpp_result_gen = Rcpp::wrap(llike_whittle(FZ, f));
-    return rcpp_result_gen;
-END_RCPP
-}
-// llike_whittle_sum
-double llike_whittle_sum(const arma::cx_cube& FZ, const arma::cx_cube& f, int freq);
-RcppExport SEXP _vnpc_avg_llike_whittle_sum(SEXP FZSEXP, SEXP fSEXP, SEXP freqSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::cx_cube& >::type FZ(FZSEXP);
-    Rcpp::traits::input_parameter< const arma::cx_cube& >::type f(fSEXP);
-    Rcpp::traits::input_parameter< int >::type freq(freqSEXP);
-    rcpp_result_gen = Rcpp::wrap(llike_whittle_sum(FZ, f, freq));
-    return rcpp_result_gen;
-END_RCPP
-}
-// llike_whittle_avg
-double llike_whittle_avg(const arma::cx_cube& mpg_avg, const arma::cx_cube& f, int Nb);
-RcppExport SEXP _vnpc_avg_llike_whittle_avg(SEXP mpg_avgSEXP, SEXP fSEXP, SEXP NbSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::cx_cube& >::type mpg_avg(mpg_avgSEXP);
-    Rcpp::traits::input_parameter< const arma::cx_cube& >::type f(fSEXP);
-    Rcpp::traits::input_parameter< int >::type Nb(NbSEXP);
-    rcpp_result_gen = Rcpp::wrap(llike_whittle_avg(mpg_avg, f, Nb));
-    return rcpp_result_gen;
-END_RCPP
-}
-// llike_corrected_avg
-double llike_corrected_avg(const arma::cx_cube& mpg_avg, const arma::cx_cube& f, const arma::cx_cube& f_param_avg_half, int Nb);
-RcppExport SEXP _vnpc_avg_llike_corrected_avg(SEXP mpg_avgSEXP, SEXP fSEXP, SEXP f_param_avg_halfSEXP, SEXP NbSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::cx_cube& >::type mpg_avg(mpg_avgSEXP);
-    Rcpp::traits::input_parameter< const arma::cx_cube& >::type f(fSEXP);
-    Rcpp::traits::input_parameter< const arma::cx_cube& >::type f_param_avg_half(f_param_avg_halfSEXP);
-    Rcpp::traits::input_parameter< int >::type Nb(NbSEXP);
-    rcpp_result_gen = Rcpp::wrap(llike_corrected_avg(mpg_avg, f, f_param_avg_half, Nb));
-    return rcpp_result_gen;
-END_RCPP
-}
-// epsilon_var
-arma::mat epsilon_var(arma::mat zt, arma::mat ar);
-RcppExport SEXP _vnpc_avg_epsilon_var(SEXP ztSEXP, SEXP arSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type zt(ztSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type ar(arSEXP);
-    rcpp_result_gen = Rcpp::wrap(epsilon_var(zt, ar));
-    return rcpp_result_gen;
-END_RCPP
-}
-// epsilon_var_n
-arma::mat epsilon_var_n(arma::mat zt, arma::mat ar);
-RcppExport SEXP _vnpc_avg_epsilon_var_n(SEXP ztSEXP, SEXP arSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type zt(ztSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type ar(arSEXP);
-    rcpp_result_gen = Rcpp::wrap(epsilon_var_n(zt, ar));
-    return rcpp_result_gen;
-END_RCPP
-}
-// sldmvnorm
-double sldmvnorm(arma::mat z_t, arma::mat Sigma);
-RcppExport SEXP _vnpc_avg_sldmvnorm(SEXP z_tSEXP, SEXP SigmaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type z_t(z_tSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type Sigma(SigmaSEXP);
-    rcpp_result_gen = Rcpp::wrap(sldmvnorm(z_t, Sigma));
-    return rcpp_result_gen;
-END_RCPP
-}
-// acvToeplitz
-arma::mat acvToeplitz(arma::mat acv);
-RcppExport SEXP _vnpc_avg_acvToeplitz(SEXP acvSEXP) {
+// acvBlockMatrix
+arma::mat acvBlockMatrix(arma::mat acv);
+RcppExport SEXP _vnpc_avg_acvBlockMatrix(SEXP acvSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat >::type acv(acvSEXP);
-    rcpp_result_gen = Rcpp::wrap(acvToeplitz(acv));
+    rcpp_result_gen = Rcpp::wrap(acvBlockMatrix(acv));
     return rcpp_result_gen;
 END_RCPP
 }
-// get_CFZ
-arma::cx_mat get_CFZ(arma::cx_mat FZ, ComplexVector f_half_inv_, ComplexVector f_param_half_, bool excludeBoundary);
-RcppExport SEXP _vnpc_avg_get_CFZ(SEXP FZSEXP, SEXP f_half_inv_SEXP, SEXP f_param_half_SEXP, SEXP excludeBoundarySEXP) {
+// acceptanceRate
+double acceptanceRate(NumericVector trace);
+RcppExport SEXP _vnpc_avg_acceptanceRate(SEXP traceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::cx_mat >::type FZ(FZSEXP);
-    Rcpp::traits::input_parameter< ComplexVector >::type f_half_inv_(f_half_inv_SEXP);
-    Rcpp::traits::input_parameter< ComplexVector >::type f_param_half_(f_param_half_SEXP);
-    Rcpp::traits::input_parameter< bool >::type excludeBoundary(excludeBoundarySEXP);
-    rcpp_result_gen = Rcpp::wrap(get_CFZ(FZ, f_half_inv_, f_param_half_, excludeBoundary));
+    Rcpp::traits::input_parameter< NumericVector >::type trace(traceSEXP);
+    rcpp_result_gen = Rcpp::wrap(acceptanceRate(trace));
     return rcpp_result_gen;
 END_RCPP
 }
-// get_CFZ_q
-arma::cx_mat get_CFZ_q(arma::cx_mat FZ, ComplexVector q_, ComplexVector f_param_half_, bool excludeBoundary);
-RcppExport SEXP _vnpc_avg_get_CFZ_q(SEXP FZSEXP, SEXP q_SEXP, SEXP f_param_half_SEXP, SEXP excludeBoundarySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::cx_mat >::type FZ(FZSEXP);
-    Rcpp::traits::input_parameter< ComplexVector >::type q_(q_SEXP);
-    Rcpp::traits::input_parameter< ComplexVector >::type f_param_half_(f_param_half_SEXP);
-    Rcpp::traits::input_parameter< bool >::type excludeBoundary(excludeBoundarySEXP);
-    rcpp_result_gen = Rcpp::wrap(get_CFZ_q(FZ, q_, f_param_half_, excludeBoundary));
-    return rcpp_result_gen;
-END_RCPP
-}
-// get_CFZ_q_sq
-arma::cx_mat get_CFZ_q_sq(arma::cx_mat FZ, ComplexVector q_, ComplexVector f_param_half_, bool excludeBoundary);
-RcppExport SEXP _vnpc_avg_get_CFZ_q_sq(SEXP FZSEXP, SEXP q_SEXP, SEXP f_param_half_SEXP, SEXP excludeBoundarySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::cx_mat >::type FZ(FZSEXP);
-    Rcpp::traits::input_parameter< ComplexVector >::type q_(q_SEXP);
-    Rcpp::traits::input_parameter< ComplexVector >::type f_param_half_(f_param_half_SEXP);
-    Rcpp::traits::input_parameter< bool >::type excludeBoundary(excludeBoundarySEXP);
-    rcpp_result_gen = Rcpp::wrap(get_CFZ_q_sq(FZ, q_, f_param_half_, excludeBoundary));
-    return rcpp_result_gen;
-END_RCPP
-}
-// chol_cube
-arma::cx_cube chol_cube(ComplexVector f_, bool excludeBoundary);
-RcppExport SEXP _vnpc_avg_chol_cube(SEXP f_SEXP, SEXP excludeBoundarySEXP) {
+// trans_cube
+arma::cx_cube trans_cube(ComplexVector f_);
+RcppExport SEXP _vnpc_avg_trans_cube(SEXP f_SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< ComplexVector >::type f_(f_SEXP);
-    Rcpp::traits::input_parameter< bool >::type excludeBoundary(excludeBoundarySEXP);
-    rcpp_result_gen = Rcpp::wrap(chol_cube(f_, excludeBoundary));
-    return rcpp_result_gen;
-END_RCPP
-}
-// sqrt_cube
-arma::cx_cube sqrt_cube(ComplexVector f_, bool excludeBoundary);
-RcppExport SEXP _vnpc_avg_sqrt_cube(SEXP f_SEXP, SEXP excludeBoundarySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< ComplexVector >::type f_(f_SEXP);
-    Rcpp::traits::input_parameter< bool >::type excludeBoundary(excludeBoundarySEXP);
-    rcpp_result_gen = Rcpp::wrap(sqrt_cube(f_, excludeBoundary));
-    return rcpp_result_gen;
-END_RCPP
-}
-// inv_cube
-arma::cx_cube inv_cube(ComplexVector f_, bool excludeBoundary);
-RcppExport SEXP _vnpc_avg_inv_cube(SEXP f_SEXP, SEXP excludeBoundarySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< ComplexVector >::type f_(f_SEXP);
-    Rcpp::traits::input_parameter< bool >::type excludeBoundary(excludeBoundarySEXP);
-    rcpp_result_gen = Rcpp::wrap(inv_cube(f_, excludeBoundary));
+    rcpp_result_gen = Rcpp::wrap(trans_cube(f_));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -345,271 +260,154 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// logdet_cube
-NumericVector logdet_cube(ComplexVector f_, bool excludeBoundary);
-RcppExport SEXP _vnpc_avg_logdet_cube(SEXP f_SEXP, SEXP excludeBoundarySEXP) {
+// get_U_cpp
+arma::cx_cube get_U_cpp(const arma::mat& u_phi);
+RcppExport SEXP _vnpc_avg_get_U_cpp(SEXP u_phiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< ComplexVector >::type f_(f_SEXP);
-    Rcpp::traits::input_parameter< bool >::type excludeBoundary(excludeBoundarySEXP);
-    rcpp_result_gen = Rcpp::wrap(logdet_cube(f_, excludeBoundary));
+    Rcpp::traits::input_parameter< const arma::mat& >::type u_phi(u_phiSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_U_cpp(u_phi));
     return rcpp_result_gen;
 END_RCPP
 }
-// const_cube
-arma::cx_cube const_cube(arma::cx_mat sigma, unsigned N);
-RcppExport SEXP _vnpc_avg_const_cube(SEXP sigmaSEXP, SEXP NSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::cx_mat >::type sigma(sigmaSEXP);
-    Rcpp::traits::input_parameter< unsigned >::type N(NSEXP);
-    rcpp_result_gen = Rcpp::wrap(const_cube(sigma, N));
-    return rcpp_result_gen;
-END_RCPP
-}
-// trans_cube
-arma::cx_cube trans_cube(ComplexVector f_);
-RcppExport SEXP _vnpc_avg_trans_cube(SEXP f_SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< ComplexVector >::type f_(f_SEXP);
-    rcpp_result_gen = Rcpp::wrap(trans_cube(f_));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rev_cube
-arma::cx_cube rev_cube(ComplexVector f_);
-RcppExport SEXP _vnpc_avg_rev_cube(SEXP f_SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< ComplexVector >::type f_(f_SEXP);
-    rcpp_result_gen = Rcpp::wrap(rev_cube(f_));
-    return rcpp_result_gen;
-END_RCPP
-}
-// c_cube
-arma::cx_cube c_cube(ComplexVector f_, ComplexVector g_);
-RcppExport SEXP _vnpc_avg_c_cube(SEXP f_SEXP, SEXP g_SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< ComplexVector >::type f_(f_SEXP);
-    Rcpp::traits::input_parameter< ComplexVector >::type g_(g_SEXP);
-    rcpp_result_gen = Rcpp::wrap(c_cube(f_, g_));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rcWishart
-arma::cx_mat rcWishart(unsigned nu, arma::cx_mat Sigma_half);
-RcppExport SEXP _vnpc_avg_rcWishart(SEXP nuSEXP, SEXP Sigma_halfSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< unsigned >::type nu(nuSEXP);
-    Rcpp::traits::input_parameter< arma::cx_mat >::type Sigma_half(Sigma_halfSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcWishart(nu, Sigma_half));
-    return rcpp_result_gen;
-END_RCPP
-}
-// chol_cpp
-arma::cx_mat chol_cpp(arma::cx_mat A);
-RcppExport SEXP _vnpc_avg_chol_cpp(SEXP ASEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::cx_mat >::type A(ASEXP);
-    rcpp_result_gen = Rcpp::wrap(chol_cpp(A));
-    return rcpp_result_gen;
-END_RCPP
-}
-// hasEigenValueSmallerZero
-bool hasEigenValueSmallerZero(arma::cx_mat A, double TOL);
-RcppExport SEXP _vnpc_avg_hasEigenValueSmallerZero(SEXP ASEXP, SEXP TOLSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::cx_mat >::type A(ASEXP);
-    Rcpp::traits::input_parameter< double >::type TOL(TOLSEXP);
-    rcpp_result_gen = Rcpp::wrap(hasEigenValueSmallerZero(A, TOL));
-    return rcpp_result_gen;
-END_RCPP
-}
-// tr
-arma::cx_double tr(arma::cx_mat A);
-RcppExport SEXP _vnpc_avg_tr(SEXP ASEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::cx_mat >::type A(ASEXP);
-    rcpp_result_gen = Rcpp::wrap(tr(A));
-    return rcpp_result_gen;
-END_RCPP
-}
-// matCond
-double matCond(arma::cx_mat A);
-RcppExport SEXP _vnpc_avg_matCond(SEXP ASEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::cx_mat >::type A(ASEXP);
-    rcpp_result_gen = Rcpp::wrap(matCond(A));
-    return rcpp_result_gen;
-END_RCPP
-}
-// numericalUnstable
-bool numericalUnstable(ComplexVector f_, bool excludeBoundary, double TOL);
-RcppExport SEXP _vnpc_avg_numericalUnstable(SEXP f_SEXP, SEXP excludeBoundarySEXP, SEXP TOLSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< ComplexVector >::type f_(f_SEXP);
-    Rcpp::traits::input_parameter< bool >::type excludeBoundary(excludeBoundarySEXP);
-    Rcpp::traits::input_parameter< double >::type TOL(TOLSEXP);
-    rcpp_result_gen = Rcpp::wrap(numericalUnstable(f_, excludeBoundary, TOL));
-    return rcpp_result_gen;
-END_RCPP
-}
-// acceptanceRate
-double acceptanceRate(NumericVector trace);
-RcppExport SEXP _vnpc_avg_acceptanceRate(SEXP traceSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type trace(traceSEXP);
-    rcpp_result_gen = Rcpp::wrap(acceptanceRate(trace));
-    return rcpp_result_gen;
-END_RCPP
-}
-// pFromV
-NumericVector pFromV(NumericVector v);
-RcppExport SEXP _vnpc_avg_pFromV(SEXP vSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type v(vSEXP);
-    rcpp_result_gen = Rcpp::wrap(pFromV(v));
-    return rcpp_result_gen;
-END_RCPP
-}
-// vFromP
-NumericVector vFromP(NumericVector p, const double eps);
-RcppExport SEXP _vnpc_avg_vFromP(SEXP pSEXP, SEXP epsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type p(pSEXP);
-    Rcpp::traits::input_parameter< const double >::type eps(epsSEXP);
-    rcpp_result_gen = Rcpp::wrap(vFromP(p, eps));
-    return rcpp_result_gen;
-END_RCPP
-}
-// cholesky_xFromPhi
-NumericVector cholesky_xFromPhi(NumericVector phi);
-RcppExport SEXP _vnpc_avg_cholesky_xFromPhi(SEXP phiSEXP) {
+// unit_trace_x_from_phi
+NumericVector unit_trace_x_from_phi(NumericVector phi);
+RcppExport SEXP _vnpc_avg_unit_trace_x_from_phi(SEXP phiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type phi(phiSEXP);
-    rcpp_result_gen = Rcpp::wrap(cholesky_xFromPhi(phi));
+    rcpp_result_gen = Rcpp::wrap(unit_trace_x_from_phi(phi));
     return rcpp_result_gen;
 END_RCPP
 }
-// cholseky_LFromx
-arma::cx_mat cholseky_LFromx(arma::vec x);
-RcppExport SEXP _vnpc_avg_cholseky_LFromx(SEXP xSEXP) {
+// unit_trace_L_from_x
+arma::cx_mat unit_trace_L_from_x(arma::vec x);
+RcppExport SEXP _vnpc_avg_unit_trace_L_from_x(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::vec >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(cholseky_LFromx(x));
+    rcpp_result_gen = Rcpp::wrap(unit_trace_L_from_x(x));
     return rcpp_result_gen;
 END_RCPP
 }
-// cholesky_jacobianLogDeterminant
-double cholesky_jacobianLogDeterminant(NumericVector phi);
-RcppExport SEXP _vnpc_avg_cholesky_jacobianLogDeterminant(SEXP phiSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type phi(phiSEXP);
-    rcpp_result_gen = Rcpp::wrap(cholesky_jacobianLogDeterminant(phi));
-    return rcpp_result_gen;
-END_RCPP
-}
-// cholesky_pVec
-NumericVector cholesky_pVec(unsigned d);
-RcppExport SEXP _vnpc_avg_cholesky_pVec(SEXP dSEXP) {
+// unit_trace_p
+NumericVector unit_trace_p(unsigned d);
+RcppExport SEXP _vnpc_avg_unit_trace_p(SEXP dSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< unsigned >::type d(dSEXP);
-    rcpp_result_gen = Rcpp::wrap(cholesky_pVec(d));
+    rcpp_result_gen = Rcpp::wrap(unit_trace_p(d));
     return rcpp_result_gen;
 END_RCPP
 }
-// cholesky_qVec
-NumericVector cholesky_qVec(unsigned d);
-RcppExport SEXP _vnpc_avg_cholesky_qVec(SEXP dSEXP) {
+// unit_trace_q
+NumericVector unit_trace_q(unsigned d);
+RcppExport SEXP _vnpc_avg_unit_trace_q(SEXP dSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< unsigned >::type d(dSEXP);
-    rcpp_result_gen = Rcpp::wrap(cholesky_qVec(d));
+    rcpp_result_gen = Rcpp::wrap(unit_trace_q(d));
+    return rcpp_result_gen;
+END_RCPP
+}
+// varma_transfer2psd
+arma::cx_cube varma_transfer2psd(ComplexVector transfer_ar_, ComplexVector transfer_ma_, arma::mat sigma);
+RcppExport SEXP _vnpc_avg_varma_transfer2psd(SEXP transfer_ar_SEXP, SEXP transfer_ma_SEXP, SEXP sigmaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< ComplexVector >::type transfer_ar_(transfer_ar_SEXP);
+    Rcpp::traits::input_parameter< ComplexVector >::type transfer_ma_(transfer_ma_SEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type sigma(sigmaSEXP);
+    rcpp_result_gen = Rcpp::wrap(varma_transfer2psd(transfer_ar_, transfer_ma_, sigma));
+    return rcpp_result_gen;
+END_RCPP
+}
+// varma_transfer2psd_cpp
+arma::cx_cube varma_transfer2psd_cpp(arma::cx_cube transfer_ar, arma::cx_cube transfer_ma, arma::mat sigma);
+RcppExport SEXP _vnpc_avg_varma_transfer2psd_cpp(SEXP transfer_arSEXP, SEXP transfer_maSEXP, SEXP sigmaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::cx_cube >::type transfer_ar(transfer_arSEXP);
+    Rcpp::traits::input_parameter< arma::cx_cube >::type transfer_ma(transfer_maSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type sigma(sigmaSEXP);
+    rcpp_result_gen = Rcpp::wrap(varma_transfer2psd_cpp(transfer_ar, transfer_ma, sigma));
+    return rcpp_result_gen;
+END_RCPP
+}
+// transfer_polynomial
+arma::cx_cube transfer_polynomial(NumericVector lambda, arma::mat coef);
+RcppExport SEXP _vnpc_avg_transfer_polynomial(SEXP lambdaSEXP, SEXP coefSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type lambda(lambdaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type coef(coefSEXP);
+    rcpp_result_gen = Rcpp::wrap(transfer_polynomial(lambda, coef));
+    return rcpp_result_gen;
+END_RCPP
+}
+// epsilon_var
+arma::mat epsilon_var(arma::mat zt, arma::mat ar);
+RcppExport SEXP _vnpc_avg_epsilon_var(SEXP ztSEXP, SEXP arSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type zt(ztSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type ar(arSEXP);
+    rcpp_result_gen = Rcpp::wrap(epsilon_var(zt, ar));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sldmvnorm
+double sldmvnorm(arma::mat z_t, arma::mat Sigma);
+RcppExport SEXP _vnpc_avg_sldmvnorm(SEXP z_tSEXP, SEXP SigmaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type z_t(z_tSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Sigma(SigmaSEXP);
+    rcpp_result_gen = Rcpp::wrap(sldmvnorm(z_t, Sigma));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_vnpc_avg_beta_fun_AGamma_process_cube", (DL_FUNC) &_vnpc_avg_beta_fun_AGamma_process_cube, 2},
-    {"_vnpc_avg_get_mix_rcpp", (DL_FUNC) &_vnpc_avg_get_mix_rcpp, 2},
-    {"_vnpc_avg_mixtureWeight_DP", (DL_FUNC) &_vnpc_avg_mixtureWeight_DP, 3},
-    {"_vnpc_avg_get_mix_rcpp_bs", (DL_FUNC) &_vnpc_avg_get_mix_rcpp_bs, 2},
-    {"_vnpc_avg_cubeTimesVector", (DL_FUNC) &_vnpc_avg_cubeTimesVector, 2},
-    {"_vnpc_avg_get_w_rcpp", (DL_FUNC) &_vnpc_avg_get_w_rcpp, 3},
-    {"_vnpc_avg_lalphaStar_AGamma", (DL_FUNC) &_vnpc_avg_lalphaStar_AGamma, 3},
-    {"_vnpc_avg_cx_cube_from_ComplexVector", (DL_FUNC) &_vnpc_avg_cx_cube_from_ComplexVector, 1},
-    {"_vnpc_avg_cube_from_NumericVector", (DL_FUNC) &_vnpc_avg_cube_from_NumericVector, 1},
-    {"_vnpc_avg_varma_transfer2psd", (DL_FUNC) &_vnpc_avg_varma_transfer2psd, 3},
-    {"_vnpc_avg_transfer_polynomial", (DL_FUNC) &_vnpc_avg_transfer_polynomial, 2},
+    {"_vnpc_avg_gibbs_multivariate_nuisance_cpp", (DL_FUNC) &_vnpc_avg_gibbs_multivariate_nuisance_cpp, 24},
     {"_vnpc_avg_realValuedPsd", (DL_FUNC) &_vnpc_avg_realValuedPsd, 1},
-    {"_vnpc_avg_llike_whittle", (DL_FUNC) &_vnpc_avg_llike_whittle, 2},
-    {"_vnpc_avg_llike_whittle_sum", (DL_FUNC) &_vnpc_avg_llike_whittle_sum, 3},
+    {"_vnpc_avg_complexValuedPsd", (DL_FUNC) &_vnpc_avg_complexValuedPsd, 1},
     {"_vnpc_avg_llike_whittle_avg", (DL_FUNC) &_vnpc_avg_llike_whittle_avg, 3},
-    {"_vnpc_avg_llike_corrected_avg", (DL_FUNC) &_vnpc_avg_llike_corrected_avg, 4},
-    {"_vnpc_avg_epsilon_var", (DL_FUNC) &_vnpc_avg_epsilon_var, 2},
-    {"_vnpc_avg_epsilon_var_n", (DL_FUNC) &_vnpc_avg_epsilon_var_n, 2},
-    {"_vnpc_avg_sldmvnorm", (DL_FUNC) &_vnpc_avg_sldmvnorm, 2},
-    {"_vnpc_avg_acvToeplitz", (DL_FUNC) &_vnpc_avg_acvToeplitz, 1},
-    {"_vnpc_avg_get_CFZ", (DL_FUNC) &_vnpc_avg_get_CFZ, 4},
-    {"_vnpc_avg_get_CFZ_q", (DL_FUNC) &_vnpc_avg_get_CFZ_q, 4},
-    {"_vnpc_avg_get_CFZ_q_sq", (DL_FUNC) &_vnpc_avg_get_CFZ_q_sq, 4},
+    {"_vnpc_avg_get_f_matrix", (DL_FUNC) &_vnpc_avg_get_f_matrix, 5},
+    {"_vnpc_avg_get_CFZ_q", (DL_FUNC) &_vnpc_avg_get_CFZ_q, 3},
+    {"_vnpc_avg_get_CFZ_q_sq", (DL_FUNC) &_vnpc_avg_get_CFZ_q_sq, 3},
     {"_vnpc_avg_chol_cube", (DL_FUNC) &_vnpc_avg_chol_cube, 2},
     {"_vnpc_avg_sqrt_cube", (DL_FUNC) &_vnpc_avg_sqrt_cube, 2},
-    {"_vnpc_avg_inv_cube", (DL_FUNC) &_vnpc_avg_inv_cube, 2},
-    {"_vnpc_avg_mult_cube", (DL_FUNC) &_vnpc_avg_mult_cube, 2},
-    {"_vnpc_avg_logdet_cube", (DL_FUNC) &_vnpc_avg_logdet_cube, 2},
-    {"_vnpc_avg_const_cube", (DL_FUNC) &_vnpc_avg_const_cube, 2},
-    {"_vnpc_avg_trans_cube", (DL_FUNC) &_vnpc_avg_trans_cube, 1},
-    {"_vnpc_avg_rev_cube", (DL_FUNC) &_vnpc_avg_rev_cube, 1},
-    {"_vnpc_avg_c_cube", (DL_FUNC) &_vnpc_avg_c_cube, 2},
-    {"_vnpc_avg_rcWishart", (DL_FUNC) &_vnpc_avg_rcWishart, 2},
-    {"_vnpc_avg_chol_cpp", (DL_FUNC) &_vnpc_avg_chol_cpp, 1},
+    {"_vnpc_avg_llike_corrected_avg", (DL_FUNC) &_vnpc_avg_llike_corrected_avg, 4},
+    {"_vnpc_avg_logdet_cube_sum", (DL_FUNC) &_vnpc_avg_logdet_cube_sum, 1},
+    {"_vnpc_avg_cx_cube_from_ComplexVector", (DL_FUNC) &_vnpc_avg_cx_cube_from_ComplexVector, 1},
+    {"_vnpc_avg_cube_from_NumericVector", (DL_FUNC) &_vnpc_avg_cube_from_NumericVector, 1},
     {"_vnpc_avg_hasEigenValueSmallerZero", (DL_FUNC) &_vnpc_avg_hasEigenValueSmallerZero, 2},
-    {"_vnpc_avg_tr", (DL_FUNC) &_vnpc_avg_tr, 1},
-    {"_vnpc_avg_matCond", (DL_FUNC) &_vnpc_avg_matCond, 1},
-    {"_vnpc_avg_numericalUnstable", (DL_FUNC) &_vnpc_avg_numericalUnstable, 3},
+    {"_vnpc_avg_acvMatrix", (DL_FUNC) &_vnpc_avg_acvMatrix, 1},
+    {"_vnpc_avg_acvBlockMatrix", (DL_FUNC) &_vnpc_avg_acvBlockMatrix, 1},
     {"_vnpc_avg_acceptanceRate", (DL_FUNC) &_vnpc_avg_acceptanceRate, 1},
-    {"_vnpc_avg_pFromV", (DL_FUNC) &_vnpc_avg_pFromV, 1},
-    {"_vnpc_avg_vFromP", (DL_FUNC) &_vnpc_avg_vFromP, 2},
-    {"_vnpc_avg_cholesky_xFromPhi", (DL_FUNC) &_vnpc_avg_cholesky_xFromPhi, 1},
-    {"_vnpc_avg_cholseky_LFromx", (DL_FUNC) &_vnpc_avg_cholseky_LFromx, 1},
-    {"_vnpc_avg_cholesky_jacobianLogDeterminant", (DL_FUNC) &_vnpc_avg_cholesky_jacobianLogDeterminant, 1},
-    {"_vnpc_avg_cholesky_pVec", (DL_FUNC) &_vnpc_avg_cholesky_pVec, 1},
-    {"_vnpc_avg_cholesky_qVec", (DL_FUNC) &_vnpc_avg_cholesky_qVec, 1},
+    {"_vnpc_avg_trans_cube", (DL_FUNC) &_vnpc_avg_trans_cube, 1},
+    {"_vnpc_avg_mult_cube", (DL_FUNC) &_vnpc_avg_mult_cube, 2},
+    {"_vnpc_avg_get_U_cpp", (DL_FUNC) &_vnpc_avg_get_U_cpp, 1},
+    {"_vnpc_avg_unit_trace_x_from_phi", (DL_FUNC) &_vnpc_avg_unit_trace_x_from_phi, 1},
+    {"_vnpc_avg_unit_trace_L_from_x", (DL_FUNC) &_vnpc_avg_unit_trace_L_from_x, 1},
+    {"_vnpc_avg_unit_trace_p", (DL_FUNC) &_vnpc_avg_unit_trace_p, 1},
+    {"_vnpc_avg_unit_trace_q", (DL_FUNC) &_vnpc_avg_unit_trace_q, 1},
+    {"_vnpc_avg_varma_transfer2psd", (DL_FUNC) &_vnpc_avg_varma_transfer2psd, 3},
+    {"_vnpc_avg_varma_transfer2psd_cpp", (DL_FUNC) &_vnpc_avg_varma_transfer2psd_cpp, 3},
+    {"_vnpc_avg_transfer_polynomial", (DL_FUNC) &_vnpc_avg_transfer_polynomial, 2},
+    {"_vnpc_avg_epsilon_var", (DL_FUNC) &_vnpc_avg_epsilon_var, 2},
+    {"_vnpc_avg_sldmvnorm", (DL_FUNC) &_vnpc_avg_sldmvnorm, 2},
     {NULL, NULL, 0}
 };
 

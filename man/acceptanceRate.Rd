@@ -3,14 +3,12 @@
 \name{acceptanceRate}
 \alias{acceptanceRate}
 \title{Computing acceptance rate based on trace
-Note: Only use for traces from continous distributions!
-This is in beyondWhittle(misc.cpp)}
+Note: Only use for traces from continous distributions!}
 \usage{
 acceptanceRate(trace)
 }
 \description{
 Computing acceptance rate based on trace
 Note: Only use for traces from continous distributions!
-This is in beyondWhittle(misc.cpp)
 }
 \keyword{internal}

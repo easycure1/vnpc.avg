@@ -2,11 +2,20 @@
 % Please edit documentation in R/RcppExports.R
 \name{cx_cube_from_ComplexVector}
 \alias{cx_cube_from_ComplexVector}
-\title{I/O: Only use *within* Rcpp in beyondWhittle(matrix_cube.cpp)}
+\title{I/O: Only used within Rcpp}
 \usage{
 cx_cube_from_ComplexVector(x)
 }
 \description{
-I/O: Only use *within* Rcpp in beyondWhittle(matrix_cube.cpp)
+This workaround for parsing cubes was neccessary at development time
+because there was a (presumable) bug in RcppArmadillo that sometimes
+caused the parsing of arma::cx_cube objects to fail, such that the function
+received an un-initialized object instead of the parsed one.
+}
+\details{
+The workaround parses an Rcpp vector instead, and manually
+copies the data in an arma::cx_cube object.
+Besides being redundant, it also makes the code less readable and it is
+hoped that this workaround can be removed in future revisions.
 }
 \keyword{internal}

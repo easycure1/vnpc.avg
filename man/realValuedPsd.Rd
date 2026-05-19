@@ -2,13 +2,11 @@
 % Please edit documentation in R/RcppExports.R
 \name{realValuedPsd}
 \alias{realValuedPsd}
-\title{Store imaginary parts above and real parts below the diagonal
-in beyondWhittle(vnp_help.cpp)}
+\title{Store imaginary parts above and real parts below the diagonal}
 \usage{
 realValuedPsd(f_)
 }
 \description{
 Store imaginary parts above and real parts below the diagonal
-in beyondWhittle(vnp_help.cpp)
 }
 \keyword{internal}

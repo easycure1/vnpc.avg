@@ -2,11 +2,11 @@
 % Please edit documentation in R/RcppExports.R
 \name{transfer_polynomial}
 \alias{transfer_polynomial}
-\title{VARMA transfer polynomials in beyondWhittle(varma.cpp)}
+\title{VARMA transfer polynomials}
 \usage{
 transfer_polynomial(lambda, coef)
 }
 \description{
-VARMA transfer polynomials in beyondWhittle(varma.cpp)
+VARMA transfer polynomials
 }
 \keyword{internal}
