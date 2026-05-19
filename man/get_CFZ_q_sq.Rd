@@ -4,7 +4,7 @@
 \alias{get_CFZ_q_sq}
 \title{Build the correction matrix in the frequency domain based on the q-parametrization with square root of matrices}
 \usage{
-get_CFZ_q_sq(FZ, q_, f_param_half_, excludeBoundary)
+get_CFZ_q_sq(FZ, q, f_param_half)
 }
 \description{
 Build the correction matrix in the frequency domain based on the q-parametrization with square root of matrices

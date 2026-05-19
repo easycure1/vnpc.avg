@@ -2,11 +2,11 @@
 % Please edit documentation in R/RcppExports.R
 \name{epsilon_var}
 \alias{epsilon_var}
-\title{Epsilon process (residuals) of VAR model in beyondWhittle(varma.cpp)}
+\title{epsilon process (residuals) of VAR model}
 \usage{
 epsilon_var(zt, ar)
 }
 \description{
-Epsilon process (residuals) of VAR model in beyondWhittle(varma.cpp)
+epsilon process (residuals) of VAR model
 }
 \keyword{internal}

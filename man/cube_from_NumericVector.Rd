@@ -2,13 +2,13 @@
 % Please edit documentation in R/RcppExports.R
 \name{cube_from_NumericVector}
 \alias{cube_from_NumericVector}
-\title{I/O: Only use *within* Rcpp}
+\title{I/O: Only used within Rcpp
+Note: Same workaround as \code{cx_cube_from_ComplexVector}}
 \usage{
 cube_from_NumericVector(x)
 }
 \description{
-I/O: Only use *within* Rcpp
+I/O: Only used within Rcpp
+Note: Same workaround as \code{cx_cube_from_ComplexVector}
 }
-\keyword{beyondWhittle(matrix_cube.cpp)}
-\keyword{in}
 \keyword{internal}

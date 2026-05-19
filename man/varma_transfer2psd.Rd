@@ -2,13 +2,13 @@
 % Please edit documentation in R/RcppExports.R
 \name{varma_transfer2psd}
 \alias{varma_transfer2psd}
-\title{Get VARMA PSD from transfer polynomials
-Helping function for \code{psd_varma} in beyondWhittle(varma.cpp)}
+\title{Get VARMA PSD from transfer polynomials 
+Helping function for \code{psd_varma}}
 \usage{
 varma_transfer2psd(transfer_ar_, transfer_ma_, sigma)
 }
 \description{
-Get VARMA PSD from transfer polynomials
-Helping function for \code{psd_varma} in beyondWhittle(varma.cpp)
+Get VARMA PSD from transfer polynomials 
+Helping function for \code{psd_varma}
 }
 \keyword{internal}
