@@ -28,6 +28,48 @@ gibbs_vnpc_avg(
   sqrt_d = F
 )
 }
+\arguments{
+\item{mpg_avg}{Averaged periodogram.}
+
+\item{f_param_avg}{Averaged PSD from the prefitted parametric model.}
+
+\item{Nb}{Number of blocks.}
+
+\item{Ntotal}{Total number of MCMC iterations.}
+
+\item{burnin}{Number of initial MCMC iterations to discard.}
+
+\item{thin}{Thinning interval for saved samples.}
+
+\item{print_interval}{Interval for printing progress updates.}
+
+\item{numerical_thresh}{Numerical threshold used for stability checks.}
+
+\item{adaption.N}{Number of iterations used during adaptive tuning.}
+
+\item{adaption.batchSize}{Batch size used during adaptive tuning.}
+
+\item{adaption.tar}{Target acceptance rate used during adaptive tuning.}
+
+\item{eta}{AGamma process parameter, real number > ncol(data) - 1.}
+
+\item{omega}{AGamma process parameter, positive constant.}
+
+\item{Sigma}{AGamma process parameter, Hpd matrix.}
+
+\item{k.theta}{Prior parameter for polynomial degree k (propto exp(-k.theta*k*log(k))).}
+
+\item{kmax}{Upper bound for polynomial degree of Bernstein-Dirichlet mixture (can be set to Inf, algorithm is faster with kmax<Inf due to pre-computation of basis functions, but values 500<kmax<Inf are very memory intensive).}
+
+\item{trunc_l, trunc_r}{Left and right truncation of Bernstein polynomial basis functions, 0<=trunc_l<trunc_r<=1.}
+
+\item{coars}{Flag indicating whether coarsened or default Bernstein polynomials are used (see Appendix E.1 in Ghosal and van der Vaart 2017).}
+
+\item{L}{Truncation parameter of Gamma process.}
+}
+\value{
+list containing the following fields:
+}
 \description{
 Gibbs sampler for multivariate Bayesian nonparametric inference with corrected Whittle likelihood
 }

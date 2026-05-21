@@ -2,6 +2,26 @@
 #'@description
 #'Gibbs sampler for multivariate Bayesian nonparametric inference with corrected Whittle likelihood
 #'
+#'@param mpg_avg Averaged periodogram.
+#'@param Nb Number of blocks.
+#'@param Ntotal Total number of MCMC iterations.
+#'@param burnin Number of initial MCMC iterations to discard.
+#'@param thin Thinning interval for saved samples.
+#'@param print_interval Interval for printing progress updates.
+#'@param numerical_thresh Numerical threshold used for stability checks.
+#'@param adaption.N Number of iterations used during adaptive tuning.
+#'@param adaption.batchSize Batch size used during adaptive tuning.
+#'@param adaption.tar Target acceptance rate used during adaptive tuning.
+#'@param eta AGamma process parameter, real number > ncol(data) - 1.
+#'@param omega AGamma process parameter, positive constant.
+#'@param Sigma AGamma process parameter, Hpd matrix.
+#'@param k.theta Prior parameter for polynomial degree k (propto exp(-k.theta*k*log(k))).
+#'@param kmax Upper bound for polynomial degree of Bernstein-Dirichlet mixture (can be set to Inf, algorithm is faster with kmax<Inf due to pre-computation of basis functions, but values 500<kmax<Inf are very memory intensive).
+#'@param trunc_l,trunc_r Left and right truncation of Bernstein polynomial basis functions, 0<=trunc_l<trunc_r<=1.
+#'@param coars Flag indicating whether coarsened or default Bernstein polynomials are used (see Appendix E.1 in Ghosal and van der Vaart 2017).
+#'@param L Truncation parameter of Gamma process.
+#'@return list containing the following fields:
+#'
 #'@importFrom Rcpp evalCpp
 #'@useDynLib vnpc.avg, .registration = TRUE
 #'@export
