@@ -141,12 +141,12 @@ plot_22 <- ggplot(true_psd_gg) +
         legend.title = element_text(size = 22))
 
 
-pdf(file = "C:/Users/Yixuan/Documents/PhD/LISA/simulation/simulation_paper/results/VAR(2)_1024_plot.pdf",
+pdf(file = "VAR(2)_1024_plot.pdf",
     width = 12, height = 9)
 
 (plot_11 + plot_12) /
   (plot_21 + plot_22)
-  
+
 
 dev.off()
 
@@ -162,8 +162,8 @@ coh_mcmc <- function(Sii, Sjj, Sij, Sji) abs(Sij^2+Sji^2) / abs(Sii * Sjj) # coh
 
 # ET data -----------------------------------------------------------------
 
-load("C:/Users/Yixuan/Documents/PhD/LISA/data/ET_data/caseA_true_psd.RData") # true psd data
-load("C:/Users/Yixuan/Documents/PhD/LISA/data/ET_data/caseA_freq_psd.RData") # true frequency data
+load("caseA_true_psd.RData") # true psd data
+load("caseA_freq_psd.RData") # true frequency data
 
 psd_true_gg <- data.frame(
   fx = psd_a[,1],
@@ -173,8 +173,8 @@ psd_true_gg <- data.frame(
 )
 
 
-load("C:/Users/Yixuan/Documents/PhD/LISA/data/ET_data/caseA_mpg_orig.RData") # periodogram based on the full-length data
-load("C:/Users/Yixuan/Documents/PhD/LISA/data/ET_data/caseA_freq_mpg.RData") # frequencies for the periodogram
+load("caseA_mpg_orig.RData") # periodogram based on the full-length data
+load("caseA_freq_mpg.RData") # frequencies for the periodogram
 
 mpg_orig_gg <- data.frame(
   fx = Re(mpg_a[1,1,-1]),
@@ -202,14 +202,14 @@ mpg_orig_gg <- data.frame(
 )
 
 
-load("C:/Users/Yixuan/Documents/PhD/LISA/data/ET_data/caseA_original.RData") # case A data
+load("caseA_original.RData") # case A data
 
 sig <- apply(caseA_data, 2, sd) # used for rescaled the psd estimates that are based on the standardized data
 
 
 freq_mcmc <- seq(5, 128, len = 1969) # frequencies for the estimates
 
-load("C:/Users/Yixuan/Documents/PhD/LISA/results/ET/mcmc_vnp_avg_ET_N20000.RData") # estimates from VNP
+load("mcmc_vnp_avg_ET_N20000.RData") # estimates from VNP
 
 vnp_rescaled <- array(dim = c(3, 3, 1969)) # rescaled estimates from VNP
 for(i in 1:1969) {                                                  
@@ -244,7 +244,7 @@ vnp_gg <- data.frame(
 
 
 
-load("C:/Users/Yixuan/Documents/PhD/LISA/results/ET/mcmc_vnpc_avg_n_seg_125_order_255_ET_N14000.RData") # estimates from VNPC
+load("mcmc_vnpc_avg_n_seg_125_order_255_ET_N14000.RData") # estimates from VNPC
 
 vnpc_rescaled <- array(dim = c(3, 3, 1969)) # rescaled estimates from VNPC
 for(i in 1:1969) {
@@ -275,6 +275,31 @@ vnpc_gg <- data.frame(
                     vnpc_rescaled[3,2,-1]),
   freq = freq_mcmc[-1]
 )
+
+
+
+#-----------------------------elbow criterion--------------------------------#
+
+load("llike_var.RData") # log-likelihood for the VAR fitting with different orders
+
+plot_order <- ggplot(data.frame(llike_var[3:303]), aes(3:303, -llike_var[3:303])) +
+  geom_line(linewidth = 1) +
+  geom_point(colour = 'red3', size = 1) +
+  # geom_vline(xintercept = seq(3,303,by=8), color = 'blue', alpha = .3) +
+  geom_vline(xintercept = c(8, 255), color = 'blue', linetype = "dashed", linewidth = .8) +
+  scale_x_continuous(breaks = seq(3, 303, by = 16)) +
+  scale_y_continuous(labels = NULL) +
+  xlab("lag") +
+  ylab("-log-likelihood") +
+  theme(axis.title = element_text(size = 20)) +
+  theme(axis.text = element_text(size = 15))
+
+
+pdf("ET_elbow_criterion.pdf", width = 16, height = 6)
+
+plot_order
+
+dev.off()
 
 
 
@@ -537,7 +562,7 @@ plot_zy <- ggplot(mpg_orig_gg) +
 
 
 
-# pdf(file = "C:/Users/Yixuan/Documents/PhD/LISA/results/ET/psd_ET_order_255_plot.pdf", 
+# pdf(file = "psd_ET_order_255_plot.pdf", 
 #     width = 18, height = 10, compress = TRUE)
 # 
 # (plot_xx + plot_xy + plot_xz) /
@@ -548,7 +573,7 @@ plot_zy <- ggplot(mpg_orig_gg) +
 # dev.off()
 
 
-png(file = "C:/Users/Yixuan/Documents/PhD/LISA/results/ET/psd_ET_order_255_plot.png",
+png(file = "psd_ET_order_255_plot.png",
     width = 5400, height = 3000, units = "px", res = 300)
 
 (plot_xx + plot_xy + plot_xz) /
