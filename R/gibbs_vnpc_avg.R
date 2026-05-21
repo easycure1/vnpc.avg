@@ -21,6 +21,7 @@
 #'@param trunc_l,trunc_r Left and right truncation of Bernstein polynomial basis functions, 0<=trunc_l<trunc_r<=1.
 #'@param coars Flag indicating whether coarsened or default Bernstein polynomials are used (see Appendix E.1 in Ghosal and van der Vaart 2017).
 #'@param L Truncation parameter of Gamma process.
+#'@param sqrt_d Flag indicating whether using the regular squre root of a positive definite matrix. Otherwise, using the Cholesky decomposition.
 #'@return list containing the following fields:
 #'
 #'@importFrom Rcpp evalCpp
