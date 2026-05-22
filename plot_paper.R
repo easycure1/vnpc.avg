@@ -401,7 +401,7 @@ plot_xy <- ggplot(mpg_orig_gg) +
   scale_colour_manual(values = c("Periodogram" = "lightgrey",
                                  "VNP" = "red3",
                                  "VNP-P(255)" = "cyan3")) +
-  labs(x = NULL, y = NULL, title = expression(Re(S[xy]))) +
+  labs(x = NULL, y = NULL, title = expression(Re(S[XY]))) +
   theme_grey() +
   theme(axis.text.x = element_text(size = 20),
         axis.text.y = element_text(size = 20),
@@ -431,7 +431,7 @@ plot_xz <- ggplot(mpg_orig_gg) +
   scale_colour_manual(values = c("Periodogram" = "lightgrey",
                                  "VNP" = "red3",
                                  "VNP-P(255)" = "cyan3")) +
-  labs(x = NULL, y = NULL, title = expression(Re(S[xz]))) +
+  labs(x = NULL, y = NULL, title = expression(Re(S[XZ]))) +
   theme_grey() +
   theme(axis.text.x = element_text(size = 20),
         axis.text.y = element_text(size = 20),
@@ -461,7 +461,7 @@ plot_yz <- ggplot(mpg_orig_gg) +
   scale_colour_manual(values = c("Periodogram" = "lightgrey",
                                  "VNP" = "red3",
                                  "VNP-P(255)" = "cyan3")) +
-  labs(x = NULL, y = "PSD", title = expression(Re(S[yz]))) +
+  labs(x = NULL, y = "PSD", title = expression(Re(S[YZ]))) +
   theme_grey() +
   theme(axis.text.x = element_text(size = 20),
         axis.text.y = element_text(size = 20),
@@ -491,7 +491,7 @@ plot_yx <- ggplot(mpg_orig_gg) +
   scale_colour_manual(values = c("Periodogram" = "lightgrey",
                                  "VNP" = "red3",
                                  "VNP-P(255)" = "cyan3")) +
-  labs(x = NULL, y = "Strain PSD [1/Hz]", title = expression(Im(S[yx]))) +
+  labs(x = NULL, y = "Strain PSD [1/Hz]", title = expression(Im(S[YX]))) +
   theme_grey() +
   theme(axis.text.x = element_text(size = 20),
         axis.text.y = element_text(size = 20),
@@ -521,7 +521,7 @@ plot_zx <- ggplot(mpg_orig_gg) +
   scale_colour_manual(values = c("Periodogram" = "lightgrey",
                                  "VNP" = "red3",
                                  "VNP-P(255)" = "cyan3")) +
-  labs(x = NULL, y = NULL, title = expression(Im(S[zx]))) +
+  labs(x = NULL, y = NULL, title = expression(Im(S[ZX]))) +
   theme_grey() +
   theme(axis.text.x = element_text(size = 20),
         axis.text.y = element_text(size = 20),
@@ -551,7 +551,7 @@ plot_zy <- ggplot(mpg_orig_gg) +
   scale_colour_manual(values = c("Periodogram" = "lightgrey",
                                  "VNP" = "red3",
                                  "VNP-P(255)" = "cyan3")) +
-  labs(x = "Frequency [Hz]", y = NULL, title = expression(Im(S[zy]))) +
+  labs(x = "Frequency [Hz]", y = NULL, title = expression(Im(S[ZY]))) +
   theme_grey() +
   theme(axis.text.x = element_text(size = 20),
         axis.text.y = element_text(size = 20),
