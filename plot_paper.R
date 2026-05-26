@@ -280,19 +280,48 @@ vnpc_gg <- data.frame(
 
 #-----------------------------elbow criterion--------------------------------#
 
-load("llike_var.RData") # log-likelihood for the VAR fitting with different orders
+# load("llike_var.RData") # log-likelihood for the VAR fitting with different orders
+load("llike_var_whittle.RData")
 
-plot_order <- ggplot(data.frame(llike_var[3:303]), aes(3:303, -llike_var[3:303])) +
+# plot_order <- ggplot(data.frame(llike_var[3:303]), aes(3:303, -llike_var[3:303])) +
+#   geom_line(linewidth = 1) +
+#   geom_point(colour = 'red3', size = 1) +
+#   # geom_vline(xintercept = seq(3,303,by=8), color = 'blue', alpha = .3) +
+#   geom_vline(xintercept = c(8, 255), color = 'blue', linetype = "dashed", linewidth = .8) +
+#   scale_x_continuous(breaks = seq(3, 303, by = 16)) +
+#   scale_y_continuous(labels = NULL) +
+#   xlab("lag") +
+#   ylab("-log-likelihood") +
+#   theme(axis.title = element_text(size = 20)) +
+#   theme(axis.text = element_text(size = 15))
+plot_order <- ggplot(data.frame(llike_var_whittle), aes(3:302, -llike_var_whittle)) +
   geom_line(linewidth = 1) +
   geom_point(colour = 'red3', size = 1) +
-  # geom_vline(xintercept = seq(3,303,by=8), color = 'blue', alpha = .3) +
-  geom_vline(xintercept = c(8, 255), color = 'blue', linetype = "dashed", linewidth = .8) +
-  scale_x_continuous(breaks = seq(3, 303, by = 16)) +
+  geom_vline(
+    data = vline_df,
+    aes(xintercept = x, colour = label),
+    linetype = "dashed",
+    linewidth = 0.8,
+    key_glyph = draw_key_path
+  ) +
+  scale_x_continuous(breaks = seq(3, 302, by = 16)) +
   scale_y_continuous(labels = NULL) +
+  scale_colour_manual(
+    values = c(
+      "41" = "blue",
+      "255" = "olivedrab3",
+      "259" = "lightpink"
+    ),
+    breaks = c("41", "255", "259"),
+    name = "Lag"
+  ) +
   xlab("lag") +
   ylab("-log-likelihood") +
-  theme(axis.title = element_text(size = 20)) +
-  theme(axis.text = element_text(size = 15))
+  theme(axis.title = element_text(size = 20),
+        axis.text = element_text(size = 15),
+        legend.text = element_text(size = 15),
+        legend.title = element_text(size = 18),
+        legend.key.width = unit(1, "cm"))
 
 
 pdf("ET_elbow_criterion.pdf", width = 16, height = 6)
