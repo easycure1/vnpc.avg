@@ -244,7 +244,7 @@ vnp_gg <- data.frame(
 
 
 
-load("mcmc_vnpc_avg_n_seg_125_order_255_ET_N14000.RData") # estimates from VNPC
+load("mcmc_vnpc_avg_n_seg_125_order_260_ET_N14000.RData") # estimates from VNPC
 
 vnpc_rescaled <- array(dim = c(3, 3, 1969)) # rescaled estimates from VNPC
 for(i in 1:1969) {
@@ -294,7 +294,13 @@ load("llike_var_whittle.RData")
 #   ylab("-log-likelihood") +
 #   theme(axis.title = element_text(size = 20)) +
 #   theme(axis.text = element_text(size = 15))
-plot_order <- ggplot(data.frame(llike_var_whittle), aes(3:302, -llike_var_whittle)) +
+
+vline_df <- data.frame(
+  x = c(41, 260, 303),
+  label = c("41", "260", "303")
+)
+
+plot_order <- ggplot(data.frame(llike_var_whittle), aes(3:402, -llike_var_whittle)) +
   geom_line(linewidth = 1) +
   geom_point(colour = 'red3', size = 1) +
   geom_vline(
@@ -304,15 +310,15 @@ plot_order <- ggplot(data.frame(llike_var_whittle), aes(3:302, -llike_var_whittl
     linewidth = 0.8,
     key_glyph = draw_key_path
   ) +
-  scale_x_continuous(breaks = seq(3, 302, by = 16)) +
+  scale_x_continuous(breaks = seq(3, 402, by = 20)) +
   scale_y_continuous(labels = NULL) +
   scale_colour_manual(
     values = c(
       "41" = "blue",
-      "255" = "olivedrab3",
-      "259" = "lightpink"
+      "260" = "olivedrab3",
+      "303" = "pink3"
     ),
-    breaks = c("41", "255", "259"),
+    breaks = c("41", "260", "303"),
     name = "Lag"
   ) +
   xlab("lag") +
@@ -341,7 +347,7 @@ plot_xx <- ggplot(mpg_orig_gg) +
   geom_line(data = vnp_gg,
             aes(x = freq, y = fx, colour = "VNP"), linewidth = .8) +
   geom_line(data = vnpc_gg,
-            aes(x = freq, y = fx, colour = "VNP-P(255)"), linewidth = .8) +
+            aes(x = freq, y = fx, colour = "VNP-P(260)"), linewidth = .8) +
   scale_y_log10(labels = trans_format("log10", math_format(10^.x)),
                 limits = c(5e-52, NA),              # lower bound slightly lower
                 breaks = c(10^-47, 10^-49, 10^-51)) +
@@ -349,7 +355,7 @@ plot_xx <- ggplot(mpg_orig_gg) +
   scale_colour_manual(values = c("Periodogram" = "lightgrey",
                                  "True PSD" = "black",
                                  "VNP" = "red3",
-                                 "VNP-P(255)" = "cyan3")) +
+                                 "VNP-P(260)" = "cyan3")) +
   labs(x = NULL, y = NULL, title = expression(S[XX])) +
   theme(axis.text.x = element_text(size = 20),
         axis.text.y = element_text(size = 20),
@@ -366,7 +372,7 @@ plot_yy <- ggplot(mpg_orig_gg) +
   geom_line(data = vnp_gg,
             aes(x = freq, y = fy, colour = "VNP"), linewidth = .8) +
   geom_line(data = vnpc_gg,
-            aes(x = freq, y = fy, colour = "VNP-P(255)"), linewidth = .8) +
+            aes(x = freq, y = fy, colour = "VNP-P(260)"), linewidth = .8) +
   scale_y_log10(labels = trans_format("log10", math_format(10^.x)),
                 limits = c(5e-52, NA),              # lower bound slightly lower
                 breaks = c(10^-47, 10^-49, 10^-51)) +
@@ -374,7 +380,7 @@ plot_yy <- ggplot(mpg_orig_gg) +
   scale_colour_manual(values = c("Periodogram" = "lightgrey",
                                  "True PSD" = "black",
                                  "VNP" = "red3",
-                                 "VNP-P(255)" = "cyan3")) +
+                                 "VNP-P(260)" = "cyan3")) +
   labs(x = NULL, y = NULL, title = expression(S[YY])) +
   theme(axis.text.x = element_text(size = 20),
         axis.text.y = element_text(size = 20),
@@ -391,7 +397,7 @@ plot_zz <- ggplot(mpg_orig_gg) +
   geom_line(data = vnp_gg,
             aes(x = freq, y = fz, colour = "VNP"), linewidth = .8) +
   geom_line(data = vnpc_gg,
-            aes(x = freq, y = fz, colour = "VNP-P(255)"), linewidth = .8) +
+            aes(x = freq, y = fz, colour = "VNP-P(260)"), linewidth = .8) +
   scale_y_log10(labels = trans_format("log10", math_format(10^.x)),
                 limits = c(5e-52, NA),              # lower bound slightly lower
                 breaks = c(10^-47, 10^-49, 10^-51)) +
@@ -399,7 +405,7 @@ plot_zz <- ggplot(mpg_orig_gg) +
   scale_colour_manual(values = c("Periodogram" = "lightgrey",
                                  "True PSD" = "black",
                                  "VNP" = "red3",
-                                 "VNP-P(255)" = "cyan3")) +
+                                 "VNP-P(260)" = "cyan3")) +
   labs(x = NULL, y = NULL, title = expression(S[ZZ]), colour = "") +
   theme(axis.text.x = element_text(size = 20),
         axis.text.y = element_text(size = 20),
@@ -416,7 +422,7 @@ plot_xy <- ggplot(mpg_orig_gg) +
   geom_line(data = vnp_gg,
             aes(x = freq, y = fxy, colour = "VNP"), linewidth = .8) +
   geom_line(data = vnpc_gg,
-            aes(x = freq, y = fxy, colour = "VNP-P(255)"), linewidth = .8) +
+            aes(x = freq, y = fxy, colour = "VNP-P(260)"), linewidth = .8) +
   scale_y_continuous(trans = scales::pseudo_log_trans(sigma = 1e-50),
                      breaks = c(-10^-49, 0, 10^-49),
                      labels = function(x) {
@@ -429,7 +435,7 @@ plot_xy <- ggplot(mpg_orig_gg) +
   scale_x_continuous(limits = c(5, 128), breaks = seq(25, 125, by = 25)) +
   scale_colour_manual(values = c("Periodogram" = "lightgrey",
                                  "VNP" = "red3",
-                                 "VNP-P(255)" = "cyan3")) +
+                                 "VNP-P(260)" = "cyan3")) +
   labs(x = NULL, y = NULL, title = expression(Re(S[XY]))) +
   theme_grey() +
   theme(axis.text.x = element_text(size = 20),
@@ -446,7 +452,7 @@ plot_xz <- ggplot(mpg_orig_gg) +
   geom_line(data = vnp_gg,
             aes(x = freq, y = fxz, colour = "VNP"), linewidth = .8) +
   geom_line(data = vnpc_gg,
-            aes(x = freq, y = fxz, colour = "VNP-P(255)"), linewidth = .8) +
+            aes(x = freq, y = fxz, colour = "VNP-P(260)"), linewidth = .8) +
   scale_y_continuous(trans = scales::pseudo_log_trans(sigma = 1e-50),
                      breaks = c(-10^-49, 0, 10^-49),
                      labels = function(x) {
@@ -459,7 +465,7 @@ plot_xz <- ggplot(mpg_orig_gg) +
   scale_x_continuous(limits = c(5, 128), breaks = seq(25, 125, by = 25)) +
   scale_colour_manual(values = c("Periodogram" = "lightgrey",
                                  "VNP" = "red3",
-                                 "VNP-P(255)" = "cyan3")) +
+                                 "VNP-P(260)" = "cyan3")) +
   labs(x = NULL, y = NULL, title = expression(Re(S[XZ]))) +
   theme_grey() +
   theme(axis.text.x = element_text(size = 20),
@@ -476,7 +482,7 @@ plot_yz <- ggplot(mpg_orig_gg) +
   geom_line(data = vnp_gg,
             aes(x = freq, y = fyz, colour = "VNP"), linewidth = .8) +
   geom_line(data = vnpc_gg,
-            aes(x = freq, y = fyz, colour = "VNP-P(255)"), linewidth = .8) +
+            aes(x = freq, y = fyz, colour = "VNP-P(260)"), linewidth = .8) +
   scale_y_continuous(trans = scales::pseudo_log_trans(sigma = 1e-50),
                      breaks = c(-10^-49, 0, 10^-49),
                      labels = function(x) {
@@ -489,7 +495,7 @@ plot_yz <- ggplot(mpg_orig_gg) +
   scale_x_continuous(limits = c(5, 128), breaks = seq(25, 125, by = 25)) +
   scale_colour_manual(values = c("Periodogram" = "lightgrey",
                                  "VNP" = "red3",
-                                 "VNP-P(255)" = "cyan3")) +
+                                 "VNP-P(260)" = "cyan3")) +
   labs(x = NULL, y = "PSD", title = expression(Re(S[YZ]))) +
   theme_grey() +
   theme(axis.text.x = element_text(size = 20),
@@ -506,7 +512,7 @@ plot_yx <- ggplot(mpg_orig_gg) +
   geom_line(data = vnp_gg,
             aes(x = freq, y = fyx, colour = "VNP"), linewidth = .8) +
   geom_line(data = vnpc_gg,
-            aes(x = freq, y = fyx, colour = "VNP-P(255)"), linewidth = .8) +
+            aes(x = freq, y = fyx, colour = "VNP-P(260)"), linewidth = .8) +
   scale_y_continuous(trans = scales::pseudo_log_trans(sigma = 1e-50),
                      breaks = c(-10^-49, 0, 10^-49),
                      labels = function(x) {
@@ -519,7 +525,7 @@ plot_yx <- ggplot(mpg_orig_gg) +
   scale_x_continuous(limits = c(5, 128), breaks = seq(25, 125, by = 25)) +
   scale_colour_manual(values = c("Periodogram" = "lightgrey",
                                  "VNP" = "red3",
-                                 "VNP-P(255)" = "cyan3")) +
+                                 "VNP-P(260)" = "cyan3")) +
   labs(x = NULL, y = "Strain PSD [1/Hz]", title = expression(Im(S[YX]))) +
   theme_grey() +
   theme(axis.text.x = element_text(size = 20),
@@ -536,7 +542,7 @@ plot_zx <- ggplot(mpg_orig_gg) +
   geom_line(data = vnp_gg,
             aes(x = freq, y = fzx, colour = "VNP"), linewidth = .8) +
   geom_line(data = vnpc_gg,
-            aes(x = freq, y = fzx, colour = "VNP-P(255)"), linewidth = .8) +
+            aes(x = freq, y = fzx, colour = "VNP-P(260)"), linewidth = .8) +
   scale_y_continuous(trans = scales::pseudo_log_trans(sigma = 1e-50),
                      breaks = c(-10^-49, 0, 10^-49),
                      labels = function(x) {
@@ -549,7 +555,7 @@ plot_zx <- ggplot(mpg_orig_gg) +
   scale_x_continuous(limits = c(5, 128), breaks = seq(25, 125, by = 25)) +
   scale_colour_manual(values = c("Periodogram" = "lightgrey",
                                  "VNP" = "red3",
-                                 "VNP-P(255)" = "cyan3")) +
+                                 "VNP-P(260)" = "cyan3")) +
   labs(x = NULL, y = NULL, title = expression(Im(S[ZX]))) +
   theme_grey() +
   theme(axis.text.x = element_text(size = 20),
@@ -566,7 +572,7 @@ plot_zy <- ggplot(mpg_orig_gg) +
   geom_line(data = vnp_gg,
             aes(x = freq, y = fzy, colour = "VNP"), linewidth = .8) +
   geom_line(data = vnpc_gg,
-            aes(x = freq, y = fzy, colour = "VNP-P(255)"), linewidth = .8) +
+            aes(x = freq, y = fzy, colour = "VNP-P(260)"), linewidth = .8) +
   scale_y_continuous(trans = scales::pseudo_log_trans(sigma = 1e-50),
                      breaks = c(-10^-49, 0, 10^-49),
                      labels = function(x) {
@@ -579,7 +585,7 @@ plot_zy <- ggplot(mpg_orig_gg) +
   scale_x_continuous(limits = c(5, 128), breaks = seq(25, 125, by = 25)) +
   scale_colour_manual(values = c("Periodogram" = "lightgrey",
                                  "VNP" = "red3",
-                                 "VNP-P(255)" = "cyan3")) +
+                                 "VNP-P(260)" = "cyan3")) +
   labs(x = "Frequency [Hz]", y = NULL, title = expression(Im(S[ZY]))) +
   theme_grey() +
   theme(axis.text.x = element_text(size = 20),
@@ -602,7 +608,7 @@ plot_zy <- ggplot(mpg_orig_gg) +
 # dev.off()
 
 
-png(file = "psd_ET_order_255_plot.png",
+png(file = "psd_ET_order_260_plot.png",
     width = 5400, height = 3000, units = "px", res = 300)
 
 (plot_xx + plot_xy + plot_xz) /
@@ -647,11 +653,11 @@ plot_coh <- ggplot(coh_gg) +
   geom_line(data = vnp_gg, aes(freq, y = coh_xy, colour = "VNP"), linewidth = .8) +
   geom_line(data = vnp_gg, aes(freq, y = coh_xz, colour = "VNP"), linewidth = .8) +
   geom_line(data = vnp_gg, aes(freq, y = coh_yz, colour = "VNP"), linewidth = .8) +
-  geom_line(data = vnpc_gg, aes(freq, y = coh_xy, colour = "VNP-P(255)"), linewidth = .8) +
-  geom_line(data = vnpc_gg, aes(freq, y = coh_xz, colour = "VNP-P(255)"), linewidth = .8) +
-  geom_line(data = vnpc_gg, aes(freq, y = coh_yz, colour = "VNP-P(255)"), linewidth = .8) +
+  geom_line(data = vnpc_gg, aes(freq, y = coh_xy, colour = "VNP-P(260)"), linewidth = .8) +
+  geom_line(data = vnpc_gg, aes(freq, y = coh_xz, colour = "VNP-P(260)"), linewidth = .8) +
+  geom_line(data = vnpc_gg, aes(freq, y = coh_yz, colour = "VNP-P(260)"), linewidth = .8) +
   scale_colour_manual(values = c("True Coherence" = "black", 
-                                 "VNP" = "red3", "VNP-P(255)" = "cyan3")) +
+                                 "VNP" = "red3", "VNP-P(260)" = "cyan3")) +
   labs(x = NULL, y = "Coherence", title = expression(Coherence[XY]), colour = "") +
   theme(axis.text.x = element_text(size = 20),
         axis.text.y = element_text(size = 20),
@@ -661,7 +667,7 @@ plot_coh <- ggplot(coh_gg) +
         plot.title = element_text(size = 20))
 
 
-pdf(file = "coherence_ET_order_255_plot.pdf", 
+pdf(file = "coherence_ET_order_260_plot.pdf", 
     width = 10, height = 6)
 
 plot_coh
